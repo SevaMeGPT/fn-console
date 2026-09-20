@@ -1,0 +1,6 @@
+.env
+archive/
+workspace/
+data_console/
+__pycache__/
+.fn_console.lock
