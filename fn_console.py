@@ -249,65 +249,36 @@ transition:transform .35s cubic-bezier(.34,1.56,.64,1);
 animation:idle 3.4s ease-in-out infinite}
 #pehlwan #beard{transform-box:fill-box;transform-origin:50% 4%}
 #pehlwan.swing #beard{animation:bw .75s cubic-bezier(.36,.07,.19,.97)}
-#pehlwan #eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
-#pehlwan #pupils{transition:transform .18s ease-out}
-@keyframes bw{0%,100%{transform:rotate(0)}22%{transform:rotate(12deg)}
-48%{transform:rotate(-9deg)}72%{transform:rotate(5deg)}}
-@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(3px) rotate(-1.4deg)}}
-@keyframes blink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.12)}}
+@keyframes bw{0%,100%{transform:rotate(0)}22%{transform:rotate(11deg)}
+48%{transform:rotate(-8deg)}72%{transform:rotate(4deg)}}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(3px) rotate(-1.3deg)}}
 </style>
-<g id="body">
-<path d="M48 240 C48 190 76 168 120 168 C164 168 192 190 192 240 Z" fill="#f2e9d8"/>
-<path d="M48 240 C48 190 76 168 120 168 L120 240 Z" fill="#e6dac2"/>
-<path d="M104 168 L120 186 L136 168" fill="none" stroke="#c9b892"
-stroke-width="4" stroke-linecap="round"/>
-</g>
-<g id="head">
-<ellipse cx="120" cy="100" rx="46" ry="48" fill="#e0a370"/>
-
-
-<g id="eyes">
-<ellipse cx="102" cy="90" rx="8" ry="9" fill="#fff"/>
-<ellipse cx="138" cy="90" rx="8" ry="9" fill="#fff"/>
-<g id="pupils">
-<circle cx="103.5" cy="91.5" r="4.4" fill="#141414"/>
-<circle cx="139.5" cy="91.5" r="4.4" fill="#141414"/>
-<circle cx="105" cy="90" r="1.5" fill="#fff"/>
-<circle cx="141" cy="90" r="1.5" fill="#fff"/>
-</g>
+<g id="head" fill="#f2e9d8">
+<path id="safa" d="M56 86 C40 38 68 8 116 6 C158 4 192 24 194 60
+C195 78 184 88 164 90 L82 94 C66 95 58 93 56 86 Z"/>
+<path id="safa-knot" d="M148 14 C162 2 182 8 184 26 C185 40 176 48 166 44
+C156 38 151 27 148 14 Z"/>
+<path id="safa-fold" d="M118 6 C108 30 104 54 106 90" stroke="#0d1117"
+stroke-width="4" fill="none" stroke-linecap="round" opacity=".16"/>
+<g id="glasses" fill="none" stroke="#f2e9d8" stroke-width="6">
+<rect x="70" y="112" width="38" height="36" rx="11"/>
+<rect x="132" y="112" width="38" height="36" rx="11"/>
+<path d="M108 124 L132 124" stroke-linecap="round"/>
+<path d="M70 124 L54 118" stroke-linecap="round"/>
+<path d="M170 124 L186 118" stroke-linecap="round"/>
 </g>
 <g id="beard">
-<path d="M73 110 C71 124 71 138 75 152 C79 178 90 204 104 216
-C110 222 116 224 120 224 C124 224 130 222 136 216 C150 204 161 178 165 152
-C169 138 169 124 167 110 C165 117 157 123 147 125 C139 132 131 135 120 135
-C109 135 101 132 93 125 C83 123 75 117 73 110 Z" fill="#4a2c17"/>
-<path d="M81 126 C81 148 88 174 100 194" stroke="#5d3a22" stroke-width="4.5"
-fill="none" stroke-linecap="round" opacity=".9"/>
-<path d="M97 132 C96 152 100 178 110 200" stroke="#6b4426" stroke-width="3"
-fill="none" stroke-linecap="round" opacity=".8"/>
-<path d="M159 126 C159 148 152 174 140 194" stroke="#5d3a22" stroke-width="4.5"
-fill="none" stroke-linecap="round" opacity=".9"/>
-<path d="M143 132 C144 152 140 178 130 200" stroke="#6b4426" stroke-width="3"
-fill="none" stroke-linecap="round" opacity=".8"/>
-<path d="M120 136 L120 206" stroke="#5d3a22" stroke-width="3" fill="none"
-stroke-linecap="round" opacity=".5"/>
-</g>
-<g id="safa">
-<path d="M62 58 C56 12 184 12 178 58 C178 70 164 77 120 77 C76 77 62 70 62 58 Z"
-fill="#ff9950"/>
-<path d="M62 56 C68 30 92 20 120 20 C148 20 172 30 178 56" fill="#ffb26e"/>
-<path d="M148 22 C160 14 176 20 178 34 C179 44 172 50 166 48 C158 42 152 32 148 22 Z"
-fill="#ff9950"/>
-<path d="M148 22 C160 14 176 20 178 34" fill="none" stroke="#e2702c"
-stroke-width="3" stroke-linecap="round"/>
-<path d="M120 20 L120 62" stroke="#e2702c" stroke-width="3.5" stroke-linecap="round"
-opacity=".45"/>
-<path d="M88 24 C80 36 76 46 77 58" stroke="#e2702c" stroke-width="3.5"
-stroke-linecap="round" opacity=".45" fill="none"/>
-<rect x="74" y="52" width="92" height="11" rx="5.5" fill="#f6c453"/>
-<circle cx="120" cy="57.5" r="7" fill="#f6c453"/>
-<circle cx="120" cy="57.5" r="3.4" fill="#d64545"/>
-<circle cx="118.6" cy="56.1" r="1.1" fill="#fff"/>
+<path d="M60 134 C70 128 82 130 92 138 C98 144 106 148 112 148
+C116 148 118 145 120 145 C122 145 124 148 128 148 C134 148 142 144 148 138
+C158 130 170 128 180 134 C188 144 191 154 189 166 C187 190 177 210 159 224
+C147 233 132 237 120 237 C108 237 93 233 81 224 C63 210 53 190 51 166
+C49 152 52 142 60 134 Z"/>
+<path d="M78 158 C76 176 84 198 98 212" stroke="#0d1117" stroke-width="4"
+fill="none" stroke-linecap="round" opacity=".2"/>
+<path d="M162 158 C164 176 156 198 142 212" stroke="#0d1117" stroke-width="4"
+fill="none" stroke-linecap="round" opacity=".2"/>
+<path d="M120 152 L120 218" stroke="#0d1117" stroke-width="3.5" fill="none"
+stroke-linecap="round" opacity=".16"/>
 </g>
 </g></svg>"""
 
@@ -347,7 +318,7 @@ button.go.bl{background:linear-gradient(135deg,#3a6fd8,#2f5cc0)}
 pre{white-space:pre-wrap;word-break:break-word}
 .card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:18px}
 .gate{max-width:380px;margin:6vh auto 0;text-align:center}
-.gate svg{width:150px;height:158px;filter:drop-shadow(0 6px 22px rgba(255,140,66,.25))}
+.gate svg{width:150px;height:158px;filter:drop-shadow(0 6px 22px rgba(242,233,216,.18))}
 .gate h1{font-size:24px;margin:6px 0 2px}
 .gate p{color:var(--mut);font-size:13px;margin:0 0 14px}
 .gate input{width:100%;margin:7px 0;text-align:center}
@@ -365,15 +336,17 @@ header button{padding:12px 9px;font-size:13px}#cd{display:none}}
 <input id=pw type=password placeholder="password" onkeydown="if(event.key==='Enter')login()">
 <button class=go onclick=login()>Enter</button><div id=lerr style=color:#f85149;font-size:13px></div>
 </div>
-<div id=app class=hide><header><span class=t><svg viewBox="0 0 200 210" width=26 height=27>
-<path d="M55 200 C55 158 75 142 100 142 C125 142 145 158 145 200 Z" fill="#1f6feb"/>
-<ellipse cx="100" cy="88" rx="30" ry="31" fill="#d99b66"/>
-<path d="M72 84 C70 106 78 126 100 132 C122 126 130 106 128 84
-C120 78 80 78 72 84 Z" fill="#2e1a10"/>
-<circle cx="89" cy="76" r="4" fill="#141414"/><circle cx="111" cy="76" r="4" fill="#141414"/>
-<path d="M66 58 C66 30 134 30 134 58 C134 66 66 66 66 58 Z" fill="#ff8c42"/>
-<rect x="74" y="52" width="52" height="7" rx="3.5" fill="#f6c453"/>
-</svg>
+<div id=app class=hide><header><span class=t><svg viewBox="0 0 240 240" width=26 height=27>
+<g fill="#f2e9d8">
+<path d="M62 92 C44 40 74 10 118 7 C160 4 194 32 191 68 C189 90 172 102 148 102 L86 102 C72 102 64 98 62 92 Z"/>
+<path d="M66 120 C74 115 84 117 92 123 C98 127 104 129 110 128 C114 127 117 124 120 124 C123 124 126 127 130 128 C136 129 142 127 148 123 C156 117 166 115 174 120 C182 132 182 156 176 176 C170 198 156 217 138 225 C126 230 114 230 102 225 C84 217 70 198 64 176 C58 156 58 132 66 120 Z"/>
+</g>
+<g fill="none" stroke="#f2e9d8" stroke-width="9">
+<rect x="82" y="110" width="33" height="31" rx="10"/>
+<rect x="125" y="110" width="33" height="31" rx="10"/>
+<path d="M115 121 L125 121" stroke-linecap="round"/>
+</g>
+</svg>SevaMeGPT</span>
 SevaMeGPT</span>
 <button class=on id=tb-chat onclick="tab('chat',this)">Chat</button>
 <button id=tb-code onclick="tab('code',this)">Code Agent</button>
@@ -708,7 +681,8 @@ class Handler(BaseHTTPRequestHandler):
         return {"user": rec["user"], "role": rec["role"]}
 
     def do_GET(self):
-        if self.path in ("/", "/index.html"):
+        path = self.path.split("?", 1)[0]
+        if path in ("/", "/index.html"):
             return self._send(200, html=PAGE)
         return self._send(404, {"error": "not found"})
 
