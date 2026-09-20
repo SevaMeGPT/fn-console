@@ -259,32 +259,30 @@ stroke-width="4" stroke-linecap="round"/>
 <ellipse cx="74" cy="104" rx="8" ry="11" fill="#d0925e"/>
 <ellipse cx="166" cy="104" rx="8" ry="11" fill="#d0925e"/>
 <g id="eyes">
-<ellipse cx="102" cy="92" rx="7.5" ry="8.5" fill="#fff"/>
-<ellipse cx="138" cy="92" rx="7.5" ry="8.5" fill="#fff"/>
+<ellipse cx="102" cy="90" rx="8" ry="9" fill="#fff"/>
+<ellipse cx="138" cy="90" rx="8" ry="9" fill="#fff"/>
 <g id="pupils">
-<circle cx="103.5" cy="93.5" r="4.2" fill="#141414"/>
-<circle cx="139.5" cy="93.5" r="4.2" fill="#141414"/>
-<circle cx="105" cy="92" r="1.5" fill="#fff"/>
-<circle cx="141" cy="92" r="1.5" fill="#fff"/>
+<circle cx="103.5" cy="91.5" r="4.4" fill="#141414"/>
+<circle cx="139.5" cy="91.5" r="4.4" fill="#141414"/>
+<circle cx="105" cy="90" r="1.5" fill="#fff"/>
+<circle cx="141" cy="90" r="1.5" fill="#fff"/>
 </g>
 </g>
 <g id="beard">
-<path d="M76 106 C74 100 80 96 87 100 C96 106 144 106 153 100 C160 96 166 100 164 106
-C170 140 162 188 142 210 C134 220 126 224 120 224 C114 224 106 220 98 210
-C78 188 70 140 76 106 Z" fill="#3b2314"/>
-<path d="M84 110 C82 134 88 168 100 190" stroke="#55341d" stroke-width="5"
-fill="none" stroke-linecap="round"/>
-<path d="M120 106 L120 208" stroke="#4a2c17" stroke-width="5" fill="none"
-stroke-linecap="round" opacity=".8"/>
-<path d="M156 110 C158 134 152 168 140 190" stroke="#55341d" stroke-width="5"
-fill="none" stroke-linecap="round"/>
-<path d="M92 116 C90 140 96 166 106 186" stroke="#6b4426" stroke-width="3"
-fill="none" stroke-linecap="round" opacity=".85"/>
-<path d="M148 116 C150 140 144 166 134 186" stroke="#6b4426" stroke-width="3"
-fill="none" stroke-linecap="round" opacity=".85"/>
-<path d="M84 176 C92 186 102 191 120 191 C138 191 148 186 156 176
-C152 192 142 208 134 214 C126 221 114 221 106 214 C98 208 88 192 84 176 Z"
-fill="#2e1a10" opacity=".55"/>
+<path d="M72 100 C70 116 70 132 74 148 C78 176 90 204 104 216
+C110 222 116 224 120 224 C124 224 130 222 136 216 C150 204 162 176 166 148
+C170 132 170 116 168 100 C166 108 158 114 148 116 C140 124 132 127 120 127
+C108 127 100 124 92 116 C82 114 74 108 72 100 Z" fill="#4a2c17"/>
+<path d="M80 118 C80 142 88 172 100 192" stroke="#5d3a22" stroke-width="4.5"
+fill="none" stroke-linecap="round" opacity=".9"/>
+<path d="M96 124 C95 148 100 176 110 198" stroke="#6b4426" stroke-width="3"
+fill="none" stroke-linecap="round" opacity=".8"/>
+<path d="M160 118 C160 142 152 172 140 192" stroke="#5d3a22" stroke-width="4.5"
+fill="none" stroke-linecap="round" opacity=".9"/>
+<path d="M144 124 C145 148 140 176 130 198" stroke="#6b4426" stroke-width="3"
+fill="none" stroke-linecap="round" opacity=".8"/>
+<path d="M120 128 L120 206" stroke="#5d3a22" stroke-width="3" fill="none"
+stroke-linecap="round" opacity=".5"/>
 </g>
 <g id="safa">
 <path d="M168 46 C198 36 216 52 210 82 C206 102 190 112 176 102
