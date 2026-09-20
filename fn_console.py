@@ -148,13 +148,19 @@ pre{white-space:pre-wrap;word-break:break-word}
 <input id=cwd value="/app/workspace"></div>
 <div id=clog></div><div id=cspin style=display:none>agent working…</div>
 <div class=row><input id=task placeholder="describe the coding task…"><button class=go onclick=code()>Run</button></div></div>
-<div id=p-admin class=hide><h3>Session archive</h3>
-<div class=row><input id=apw type=password placeholder="admin password"><button class=go onclick=loadLog()>Decrypt today</button>
-<button class=go onclick="loadLogDL()">Download .gz</button></div>
+<div id=p-admin class=hide>
+<div id=alock><h3>Admin area</h3>
+<div class=row><input id=apw0 type=password placeholder="admin password"><button class=go onclick=admUnlock()>Unlock</button></div>
+<p id=aerr style=color:#f85149;font-size:12px></p>
+<p style=color:#8b949e;font-size:12px>The session archive is hidden until the admin
+password is validated by the server.</p></div>
+<div id=apanel class=hide><h3>Session archive</h3>
+<div class=row><input id=apw type=password placeholder="admin password"><button class=go onclick=decryptLog()>Decrypt today</button>
+<button class=go onclick="downloadGz()">Download .gz</button></div>
 <pre id=alog style="background:#010409;padding:12px;max-height:60vh;overflow:auto">—</pre>
 <p style=color:#8b949e;font-size:12px>Every chat and coding session is logged here,
 encrypted (counter-mode stream cipher, key derived from the admin password via
-PBKDF2-200k) and gzip-compressed. Download gives the raw encrypted file.</p></div>
+PBKDF2-200k) and gzip-compressed. Download gives the raw encrypted file.</p></div></div>
 </div>
 <script>
 let TAB="chat";
@@ -194,14 +200,29 @@ message:t,cwd:document.getElementById("cwd").value});
 sp.style.display="none";
 for(const s of (d.steps||[]))cl.insertAdjacentHTML("beforeend",`<div class="step">${esc(s)}</div>`);
 cl.insertAdjacentHTML("beforeend",`<div class="msg bot">${esc(d.reply||d.error||"")}</div>`)}
-async function loadLogDL(){const pw=document.getElementById("apw").value;
+async function admUnlock(){const pw=document.getElementById("apw0").value;
+const r=await fetch("/admin/verify",{method:"POST",
+headers:{"content-type":"application/json"},body:JSON.stringify({pw})});
+if(r.ok){document.getElementById("apw").value=pw;
+document.getElementById("alock").classList.add("hide");
+document.getElementById("apanel").classList.remove("hide")}
+else document.getElementById("aerr").textContent="wrong admin password"}
+async function decryptLog(){const pw=document.getElementById("apw").value;
 const r=await fetch("/admin/log",{method:"POST",
 headers:{"content-type":"application/json"},
 body:JSON.stringify({pw})});
 if(!r.ok){alert("wrong admin password");return}
-const day=r.headers.get("X-Day")||"today";
 const text=await r.text();
 document.getElementById("alog").textContent=text||"(empty)"}
+async function downloadGz(){const pw=document.getElementById("apw").value;
+const r=await fetch("/admin/log/download",{method:"POST",
+headers:{"content-type":"application/json"},
+body:JSON.stringify({pw})});
+if(!r.ok){alert("wrong admin password");return}
+const b=await r.blob();const a=document.createElement("a");
+a.href=URL.createObjectURL(b);
+a.download="fn_console_log_"+new Date().toISOString().slice(0,10)+".jsonl.enc.gz";
+a.click();URL.revokeObjectURL(a.href)}
 </script></body></html>"""
 
 
@@ -365,6 +386,13 @@ class Handler(BaseHTTPRequestHandler):
                            "request": message, "reply": reply,
                            "steps": steps, "secs": round(time.time() - t0, 1)})
             return self._send(200, {"reply": reply, "steps": steps})
+
+        if self.path == "/admin/verify":
+            if req.get("pw") != ADMIN_PASSWORD:
+                return self._send(401, {"error": "wrong admin password"})
+            tok = secrets.token_hex(16)
+            ADMIN_OK[tok] = time.time() + 3600
+            return self._send(200, {"ok": True, "admin_token": tok})
 
         if self.path == "/admin/log":
             if req.get("pw") != ADMIN_PASSWORD:
