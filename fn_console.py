@@ -216,11 +216,12 @@ threading.Thread(target=_refresh_openrouter, daemon=True).start()
 
 
 def _model_label(pid: str, mid: str) -> str:
-    """Dropdown label: short name · free/provider · code/chat."""
+    """Dropdown label: short name · free/provider — CODE tag only for specialists."""
     short = mid.split("/")[-1].replace(":free", "").replace("-", " ").strip()
-    kind = "code" if any(k in mid.lower() for k in ("coder", "code", "dev")) else "chat"
-    tag = "free" if (":free" in mid or mid.endswith("-free")) else f"{pid} (Limited use)"
-    return f"{short} · {tag} · {kind}"
+    low = mid.lower()
+    tag = "free" if (":free" in low or low.endswith("-free")) else f"{pid} (Limited use)"
+    codey = any(k in low for k in ("coder", "code", "codestral", "devstral", "starcoder"))
+    return f"{short} · {tag} · CODE" if codey else f"{short} · {tag}"
 
 
 ALL_MODELS = [f"{p}:{m}" for p, pv in PROVIDERS.items() if pv["key"]
