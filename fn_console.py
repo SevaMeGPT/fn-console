@@ -290,57 +290,73 @@ stroke-width="4" fill="none" stroke-linecap="round" opacity=".12"/>
 
 PAGE = """<!doctype html><html><head><meta charset=utf-8><meta name=viewport
 content="width=device-width,initial-scale=1"><title>SevaMeGPT</title><style>
-:root{--bg:#0a0e14;--card:#11161f;--edge:#1f2733;--mut:#8b98a9;--acc:#4f8ff7;--grn:#2ea653}
+:root{--bg:#0b1018;--card:#121926;--edge:#223042;--mut:#93a1b5;--acc:#5b9bff;--grn:#2ea653}
 *{box-sizing:border-box}
 body{font-family:system-ui,-apple-system,Segoe UI,Roboto;margin:0;background:
-radial-gradient(1200px 700px at 70% -10%,#12203a 0%,var(--bg) 55%);color:#e8eef6;min-height:100vh}
-header{display:flex;background:rgba(4,8,14,.85);backdrop-filter:blur(8px);padding:0 12px;
-border-bottom:1px solid var(--edge);align-items:center;position:sticky;top:0;z-index:5}
-header .t{color:var(--acc);font-weight:700;margin-right:10px;font-size:15px;letter-spacing:.3px;
-display:flex;align-items:center;gap:7px}
-header .t svg{width:26px;height:27px}
-header button{background:none;border:0;color:var(--mut);padding:14px 14px;font-size:14px;cursor:pointer}
-header button.on{color:#fff;border-bottom:2px solid var(--acc)}
-#cd{font-size:11.5px;color:var(--mut);white-space:nowrap;font-variant-numeric:tabular-nums}
-.wrap{max-width:880px;margin:0 auto;padding:14px}
-.msg{margin:8px 0;padding:10px 14px;border-radius:12px;white-space:pre-wrap;word-break:break-word;
-line-height:1.45}
-.you{background:#14243d;margin-left:10%}
-.bot{background:#12241a}
-.step{background:#141a24;border-left:3px solid var(--acc);padding:6px 10px;margin:6px 0;
+radial-gradient(1100px 600px at 75% -8%,#152643 0%,var(--bg) 52%);color:#eaf1fa;min-height:100vh}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#2b3b52;border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+header{display:flex;gap:4px;align-items:center;background:rgba(6,11,19,.9);
+backdrop-filter:blur(10px);padding:8px 14px;border-bottom:1px solid var(--edge);
+position:sticky;top:0;z-index:5;box-shadow:0 4px 24px rgba(0,0,0,.35)}
+header .t{color:var(--acc);font-weight:700;margin-right:8px;font-size:16px;letter-spacing:.2px;
+display:flex;align-items:center;gap:8px}
+header .t svg{width:30px;height:31px;filter:drop-shadow(0 2px 8px rgba(242,233,216,.15))}
+header button{background:none;border:0;color:var(--mut);padding:9px 15px;font-size:14px;
+cursor:pointer;border-radius:9px;transition:.15s}
+header button:hover{color:#dfe9f5;background:#17233566}
+header button.on{color:#fff;background:#1b2a44;font-weight:600}
+#cd{margin-left:auto;font-size:11.5px;color:var(--mut);white-space:nowrap;
+font-variant-numeric:tabular-nums;background:#121c2b;border:1px solid var(--edge);
+padding:5px 10px;border-radius:99px}
+.wrap{max-width:860px;margin:0 auto;padding:18px 16px 8px}
+.msg{margin:10px 0;padding:11px 15px;border-radius:14px;white-space:pre-wrap;
+word-break:break-word;line-height:1.5;border:1px solid #1c2a3e;max-width:88%}
+.you{background:linear-gradient(160deg,#16283f,#132137);margin-left:auto;border-color:#24384f}
+.bot{background:#11241b;border-color:#1d3a2b}
+.step{background:#131a26;border-left:3px solid var(--acc);padding:7px 11px;margin:6px 0;
 font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:#9fb3c8;
-white-space:pre-wrap;word-break:break-word;border-radius:0 8px 8px 0}
-.row{display:flex;gap:8px;position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 30%);
-padding:10px 0}
-input,select{padding:11px;background:var(--card);color:#e8eef6;border:1px solid #2a3646;
-border-radius:10px;font-size:15px;outline:none}
+white-space:pre-wrap;word-break:break-word;border-radius:0 9px 9px 0}
+.row{display:flex;gap:8px;position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 35%);
+padding:12px 0}
+#inputbar{display:flex;gap:8px;flex:1;background:var(--card);border:1px solid #2a3a50;
+border-radius:14px;padding:6px 6px 6px 4px;align-items:center;transition:border-color .15s}
+#inputbar:focus-within{border-color:var(--acc)}
+#inputbar input{border:0;background:transparent;flex:1;padding:9px 6px;font-size:15px}
+button.clip{padding:10px 11px;border-radius:10px;border:1px solid #2a3a50;cursor:pointer;
+font-size:15px;background:transparent;color:var(--mut);transition:.15s}
+button.clip:hover{color:#dfe9f5;background:#1b2a44}
+button.clip.rec{color:#fff;background:#b02a37;border-color:#b02a37;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.chip{display:inline-block;background:#1c2a3f;color:#9fc3f8;border-radius:8px;
+padding:3px 10px;font-size:12px;margin:4px 4px 0 0;border:1px solid #2a3a50}
+input,select{padding:11px;background:var(--card);color:#eaf1fa;border:1px solid #2a3a50;
+border-radius:10px;font-size:15px;outline:none;transition:border-color .15s}
 input:focus,select:focus{border-color:var(--acc)}
 #in,#task,#rpw{flex:1}
-button.go{padding:10px 18px;border-radius:10px;border:0;cursor:pointer;font-size:15px;color:#fff;
-background:linear-gradient(135deg,#2ea653,#238636)}
-button.go.bl{background:linear-gradient(135deg,#3a6fd8,#2f5cc0)}
+button.go{padding:10px 20px;border-radius:11px;border:0;cursor:pointer;font-size:15px;color:#fff;
+background:linear-gradient(135deg,#31b45c,#23913c);font-weight:600;letter-spacing:.2px;transition:.15s}
+button.go:hover{filter:brightness(1.12)}
+button.go.bl{background:linear-gradient(135deg,#3f7ae4,#3263c4)}
 .spin{display:none;color:var(--acc);padding:6px;font-size:13px}
-button.clip{padding:10px 12px;border-radius:10px;border:1px solid #2a3646;cursor:pointer;
-font-size:15px;background:var(--card);color:var(--mut)}
-button.clip.rec{color:#fff;background:#b02a37;border-color:#b02a37;animation:pulse 1s infinite}
-@keyframes pulse{50%{opacity:.6}}
-.chip{display:inline-block;background:#1c2a3f;color:#9fc3f8;border-radius:8px;
-padding:3px 10px;font-size:12px;margin:4px 4px 0 0}
 .hide{display:none!important}
 pre{white-space:pre-wrap;word-break:break-word}
-.card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:18px}
-.gate{max-width:380px;margin:6vh auto 0;text-align:center}
-.gate svg{width:150px;height:158px;filter:drop-shadow(0 6px 22px rgba(242,233,216,.18))}
-.gate h1{font-size:24px;margin:6px 0 2px}
-.gate p{color:var(--mut);font-size:13px;margin:0 0 14px}
-.gate input{width:100%;margin:7px 0;text-align:center}
-.gate button.go{width:100%;margin-top:10px;padding:12px}
+.card{background:linear-gradient(180deg,#131b29,var(--card));border:1px solid var(--edge);
+border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.gate{max-width:390px;margin:5vh auto 0;text-align:center}
+.gate svg{width:158px;height:166px;filter:drop-shadow(0 10px 30px rgba(242,233,216,.22))}
+.gate h1{font-size:26px;margin:8px 0 3px;letter-spacing:.3px}
+.gate p{color:var(--mut);font-size:13px;margin:0 0 18px}
+.gate input{width:100%;margin:7px 0;text-align:center;padding:12px}
+.gate button.go{width:100%;margin-top:12px;padding:13px}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-td,th{padding:7px 8px;border-bottom:1px solid var(--edge);text-align:left}
-h3{margin:2px 0 12px}
-.hint{color:var(--mut);font-size:12px;line-height:1.5}
-@media(max-width:640px){.you{margin-left:4%}.wrap{padding:10px}
-header button{padding:12px 9px;font-size:13px}#cd{display:none}}
+td,th{padding:8px;border-bottom:1px solid var(--edge);text-align:left}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+h3{margin:2px 0 14px;font-size:17px}
+.hint{color:var(--mut);font-size:12px;line-height:1.55}
+@media(max-width:640px){.msg{max-width:100%}.you{margin-left:6%}.wrap{padding:12px 10px 6px}
+header button{padding:9px 10px;font-size:13px}#cd{display:none}}
 </style></head><body>
 <div id=gate class=gate>__MASCOT__
 <h1>SevaMeGPT</h1><p>bindaas chats • code karo • mast</p>
@@ -360,7 +376,6 @@ onkeydown="if(event.key==='Enter')document.getElementById('pw').focus()">
 <path d="M115 121 L125 121" stroke-linecap="round"/>
 </g>
 </svg>SevaMeGPT</span>
-SevaMeGPT</span>
 <button class=on id=tb-chat onclick="tab('chat',this)">Chat</button>
 <button id=tb-code onclick="tab('code',this)">Code Agent</button>
 <button id=tb-admin onclick="tab('admin',this)">Admin</button>
@@ -368,18 +383,12 @@ SevaMeGPT</span>
 <select id=m style="margin-left:12px;max-width:34vw"></select></header>
 <div class=wrap id=p-chat><div id=log></div><div id=spin class=spin>seva soch raha hai…</div>
 <div id=chips-chat></div>
-<div class=row><button class=clip id=mic-chat title="voice input" onclick=mic('chat')>&#127908;</button>
-<button class=clip title="attach file" onclick="document.getElementById('file-chat').click()">&#128206;</button>
-<input id=file-chat type=file class=hide onchange=uploadFile('chat')>
-<input id=in placeholder="ask anything…"><button class=go onclick=send()>Send</button></div></div>
+<div class=row><div id=inputbar><button class=clip id=mic-chat title="voice input" onclick=mic('chat')>🎤</button><button class=clip title="attach file" onclick="document.getElementById('file-chat').click()">&#128206;</button><input id=file-chat type=file class=hide onchange=uploadFile('chat')><input id=in placeholder="ask anything…"><button class=go onclick=send()>Send</button></div></div></div>
 <div id=p-code class=hide><div class=row style=margin-bottom:8px>working dir:
 <input id=cwd value="/app/workspace" style=flex:1></div>
 <div id=clog></div><div id=cspin class=spin>agent working…</div>
 <div id=chips-code></div>
-<div class=row><button class=clip id=mic-code title="voice input" onclick=mic('code')>&#127908;</button>
-<button class=clip title="attach file" onclick="document.getElementById('file-code').click()">&#128206;</button>
-<input id=file-code type=file class=hide onchange=uploadFile('code')>
-<input id=task placeholder="describe the coding task…"><button class=go onclick=code()>Run</button></div></div>
+<div class=row><div id=inputbar><button class=clip id=mic-code title="voice input" onclick=mic('code')>🎤</button><button class=clip title="attach file" onclick="document.getElementById('file-code').click()">&#128206;</button><input id=file-code type=file class=hide onchange=uploadFile('code')><input id=task placeholder="describe the coding task…"><button class=go onclick=code()>Run</button></div></div></div>
 <div id=p-admin class=hide>
 <div id=alock class=card style="max-width:420px;margin:20px auto"><h3>Admin area</h3>
 <div class=row><input id=apw0 type=password placeholder="admin password" style=flex:1
