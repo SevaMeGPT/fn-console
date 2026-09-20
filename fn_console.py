@@ -23,6 +23,7 @@ import subprocess
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
@@ -108,7 +109,7 @@ def _load_users() -> dict:
     if USERS_F.exists():
         return json.loads(USERS_F.read_text())
     d = {"users": [{"u": "seva", "h": _h(APP_PASSWORD), "role": "admin"}],
-         "limit": 10000, "window_h": 24}
+         "limit": 10000, "window_h": 24, "max_upload_mb": 10}
     _save_users(d)
     return d
 
@@ -318,6 +319,12 @@ button.go{padding:10px 18px;border-radius:10px;border:0;cursor:pointer;font-size
 background:linear-gradient(135deg,#2ea653,#238636)}
 button.go.bl{background:linear-gradient(135deg,#3a6fd8,#2f5cc0)}
 .spin{display:none;color:var(--acc);padding:6px;font-size:13px}
+button.clip{padding:10px 12px;border-radius:10px;border:1px solid #2a3646;cursor:pointer;
+font-size:15px;background:var(--card);color:var(--mut)}
+button.clip.rec{color:#fff;background:#b02a37;border-color:#b02a37;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.6}}
+.chip{display:inline-block;background:#1c2a3f;color:#9fc3f8;border-radius:8px;
+padding:3px 10px;font-size:12px;margin:4px 4px 0 0}
 .hide{display:none!important}
 pre{white-space:pre-wrap;word-break:break-word}
 .card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:18px}
@@ -358,11 +365,19 @@ SevaMeGPT</span>
 <span id=cd style="margin-left:auto"></span>
 <select id=m style="margin-left:12px;max-width:34vw"></select></header>
 <div class=wrap id=p-chat><div id=log></div><div id=spin class=spin>seva soch raha hai…</div>
-<div class=row><input id=in placeholder="ask anything…"><button class=go onclick=send()>Send</button></div></div>
+<div id=chips-chat></div>
+<div class=row><button class=clip id=mic-chat title="voice input" onclick=mic('chat')>&#127908;</button>
+<button class=clip title="attach file" onclick="document.getElementById('file-chat').click()">&#128206;</button>
+<input id=file-chat type=file class=hide onchange=uploadFile('chat')>
+<input id=in placeholder="ask anything…"><button class=go onclick=send()>Send</button></div></div>
 <div id=p-code class=hide><div class=row style=margin-bottom:8px>working dir:
 <input id=cwd value="/app/workspace" style=flex:1></div>
 <div id=clog></div><div id=cspin class=spin>agent working…</div>
-<div class=row><input id=task placeholder="describe the coding task…"><button class=go onclick=code()>Run</button></div></div>
+<div id=chips-code></div>
+<div class=row><button class=clip id=mic-code title="voice input" onclick=mic('code')>&#127908;</button>
+<button class=clip title="attach file" onclick="document.getElementById('file-code').click()">&#128206;</button>
+<input id=file-code type=file class=hide onchange=uploadFile('code')>
+<input id=task placeholder="describe the coding task…"><button class=go onclick=code()>Run</button></div></div>
 <div id=p-admin class=hide>
 <div id=alock class=card style="max-width:420px;margin:20px auto"><h3>Admin area</h3>
 <div class=row><input id=apw0 type=password placeholder="admin password" style=flex:1
@@ -385,12 +400,14 @@ and gzip-compressed. Download gives the raw encrypted file.</p></div>
 <input id=nu placeholder="new username" style=flex:1><input id=npw placeholder="password" style=flex:1
 onkeydown="if(event.key==='Enter')addUser()"><button class=go onclick=addUser()>Add user</button></div>
 <p id=uerr style=color:#f85149;font-size:13px></p></div>
-<div class=card style=margin:14px 0><h3>Token budget (non-admin users)</h3>
+<div class=card style=margin:14px 0><h3>Limits (non-admin users)</h3>
 <div class=row style=position:static;background:none;padding:0>
-<input id=lim type=number placeholder="tokens per window"><input id=wh type=number placeholder="window hours">
+<input id=lim type=number placeholder="tokens per window" title="token budget">
+<input id=wh type=number placeholder="window hours" title="budget window">
+<input id=maxmb type=number placeholder="max upload MB" title="file upload cap">
 <button class="go bl" onclick=saveLimits()>Save</button></div>
-<p class=hint>Each non-admin user can use this many upstream tokens per window.
-Admins are unlimited.</p></div>
+<p class=hint>Token budget per window, and the file-upload size cap — admins
+are unlimited on both. Files land in the workspace for the Code Agent.</p></div>
 </div></div>
 </div>
 <div id=reauth style="display:none;position:fixed;inset:0;background:rgba(2,6,12,.78);
@@ -449,6 +466,7 @@ headers:{"content-type":"application/json","x-fn-token":(SESS?SESS.tok:"")},
 body:"{}"});
 if(r.status===401){showReauth();return}
 if(!r.ok)return;const ms=(await r.json()).models;
+document.getElementById("app").dataset.maxmb=ms.max_upload_mb||10;
 const sel=document.getElementById("m");sel.innerHTML="";
 for(const m of ms){const o=document.createElement("option");o.value=m.id;
 o.textContent=m.label;sel.appendChild(o)}}
@@ -457,19 +475,65 @@ headers:{"content-type":"application/json","x-fn-token":(SESS?SESS.tok:"")},
 body:JSON.stringify(body)});
 if(r.status===401){showReauth();throw 0}
 const d=await r.json();if(r.status===429){alert(d.error||"limit reached");throw 0}return d}
-async function send(){const i=document.getElementById("in");const t=i.value.trim();
-if(!t)return;i.value="";
+async function uploadFile(tab){const inp=document.getElementById("file-"+tab);
+const f=inp.files[0];if(!f)return;
+const maxMb=parseFloat(document.getElementById("app").dataset.maxmb||"10");
+if(f.size>maxMb*1048576){alert("file "+(f.size/1048576).toFixed(1)+
+" MB — limit "+maxMb+" MB (admin sets it)");inp.value="";return}
+const chip=document.getElementById("chips-"+tab);
+chip.insertAdjacentHTML("beforeend",`<span class="chip">uploading ${esc(f.name)}…</span>`);
+const r=await fetch("/upload",{method:"POST",
+headers:{"content-type":"application/octet-stream","x-fn-token":(SESS?SESS.tok:""),
+"x-filename":encodeURIComponent(f.name)},body:f});
+const chips=chip.querySelectorAll(".chip");chips[chips.length-1].remove();
+if(r.status===413){const d=await r.json();alert(d.error);inp.value="";return}
+if(!r.ok){alert("upload failed — phir se try karo");inp.value="";return}
+const d=await r.json();window["att_"+tab]=d.name;
+if(tab==="chat"&&f.size<16384&&/\.(txt|md|csv|json|py|js|log|ini|yaml|yml|html|css|ts|xml)$/i.test(f.name)){
+window["atttext_"+tab]=(await f.text()).slice(0,12000)}
+chip.insertAdjacentHTML("beforeend",`<span class="chip">&#128206; ${esc(d.name)} (${(d.size/1024).toFixed(1)} KB)</span>`);
+inp.value="";}
+function mic(tab){const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!R){alert("voice input is built into Chrome/Edge — wahan try karo");return}
+const key="_rec_"+tab;
+if(window[key]){window[key].stop();return}
+const rec=new R();rec.lang=navigator.language||"en-IN";rec.interimResults=true;
+const inp=document.getElementById(tab==="chat"?"in":"task");
+const base=inp.value;
+rec.onresult=e=>{let t="";for(const r of e.results)t+=r[0].transcript;
+inp.value=(base?base+" ":"")+t};
+rec.onend=()=>{document.getElementById("mic-"+tab).classList.remove("rec");window[key]=null};
+rec.onerror=e=>{window[key]=null;
+document.getElementById("mic-"+tab).classList.remove("rec");
+if(e.error==="not-allowed")alert("mic permission chahiye bhai — allow karo")};
+window[key]=rec;document.getElementById("mic-"+tab).classList.add("rec");rec.start()}
+async function send(){const i=document.getElementById("in");
+let t=i.value.trim();
+if(!t&&!window.att_chat)return;i.value="";
 const log=document.getElementById("log");
+if(window.att_chat){
+const txt=window.atttext_chat?window.atttext_chat+"
+":"";
+t=`[file: ${window.att_chat}]
+${txt}
+${t||"is file ke baare mein batao"}`}
 log.insertAdjacentHTML("beforeend",`<div class="msg you">${esc(t)}</div>`);
+document.getElementById("chips-chat").innerHTML="";
+window.att_chat=window.atttext_chat=null;
 const sp=document.getElementById("spin");sp.style.display="block";
 try{const d=await post("/task",{tab:"chat",model:document.getElementById("m").value,message:t});
 log.insertAdjacentHTML("beforeend",`<div class="msg bot">${esc(d.reply||d.error||"(empty)")}</div>`)}
 catch(e){if(e!==0)log.insertAdjacentHTML("beforeend",
 `<div class="msg bot">upar se hawa lag gayi — try again</div>`)}
 sp.style.display="none"}
-async function code(){const i=document.getElementById("task");const t=i.value.trim();
-if(!t)return;i.value="";const cl=document.getElementById("clog");
+async function code(){const i=document.getElementById("task");
+let t=i.value.trim();
+if(!t&&!window.att_code)return;i.value="";const cl=document.getElementById("clog");
 const sp=document.getElementById("cspin");sp.style.display="block";
+if(window.att_code){t=(t||"inspect the uploaded file")+
+`; the file is at uploads/${window.att_code} in the working directory`}
+document.getElementById("chips-code").innerHTML="";
+window.att_code=null;
 try{const d=await post("/task",{tab:"code",model:document.getElementById("m").value,
 message:t,cwd:document.getElementById("cwd").value});
 for(const s of (d.steps||[]))cl.insertAdjacentHTML("beforeend",`<div class="step">${esc(s)}</div>`);
@@ -487,8 +551,9 @@ document.getElementById("apanel").classList.remove("hide");adminLoad()}
 else document.getElementById("aerr").textContent="wrong admin password"}
 async function adminLoad(){const d=await post("/admin/users",{});
 if(!d.users)return;
-const L=d.limit,W=d.window_h;
+const L=d.limit,W=d.window_h,M=d.max_upload_mb;
 document.getElementById("lim").value=L;document.getElementById("wh").value=W;
+document.getElementById("maxmb").value=M;
 document.getElementById("utab").innerHTML="<tr><th>user</th><th>role</th><th>used / limit</th><th></th></tr>"+
 d.users.map(u=>`<tr><td>${esc(u.u)}</td><td>${esc(u.role)}</td>`+
 `<td>${u.role==="admin"?"unlimited":u.used.toLocaleString()+" / "+L.toLocaleString()}</td>`+
@@ -503,7 +568,9 @@ document.getElementById("uerr").textContent="";adminLoad()}
 async function delUser(u){await post("/admin/users",{action:"del",u});adminLoad()}
 async function saveLimits(){const lim=parseInt(document.getElementById("lim").value)||10000;
 const wh=parseFloat(document.getElementById("wh").value)||24;
-await post("/admin/users",{action:"limits",limit:lim,window_h:wh});adminLoad()}
+const maxmb=parseFloat(document.getElementById("maxmb").value)||10;
+await post("/admin/users",{action:"limits",limit:lim,window_h:wh,max_upload_mb:maxmb});
+adminLoad()}
 async function decryptLog(){const pw=document.getElementById("apw").value;
 const r=await fetch("/admin/log",{method:"POST",
 headers:{"content-type":"application/json","x-fn-token":(SESS?SESS.tok:"")},
@@ -674,6 +741,30 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _do_upload(self):
+        sess = self._sess({})
+        if sess is None:
+            return self._send(401, {"error": "session expired — re-login"})
+        max_mb = float(USERS.get("max_upload_mb", 10))
+        n = int(self.headers.get("content-length", 0))
+        if n <= 0:
+            return self._send(400, {"error": "empty upload"})
+        if n > max_mb * 1024 * 1024:
+            return self._send(413, {"error":
+                f"file too heavy bhai — limit {max_mb:g} MB (admin sets it)"})
+        raw_name = urllib.parse.unquote(
+            self.headers.get("x-filename", "file.bin"))
+        safe = "".join(c if (c.isalnum() or c in "._- ") else "_" for c in raw_name)
+        safe = safe.strip().strip(".")
+        if not safe or safe.startswith("."):
+            safe = "_" + safe.lstrip(".")
+        safe = safe or "file.bin"
+        updir = WORKSPACE / "uploads"
+        updir.mkdir(parents=True, exist_ok=True)
+        (updir / safe).write_bytes(self.rfile.read(n))
+        return self._send(200, {"ok": True, "name": safe, "size": n,
+                                "path": f"uploads/{safe}"})
+
     def _sess(self, req: dict) -> dict | None:
         """Resolve the caller to {user, role} or None."""
         if STATIC_API_KEY and self.headers.get("x-api-key", "") == STATIC_API_KEY:
@@ -691,6 +782,8 @@ class Handler(BaseHTTPRequestHandler):
         return self._send(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path.split("?", 1)[0] == "/upload":
+            return self._do_upload()
         n = int(self.headers.get("content-length", 0))
         req = json.loads(self.rfile.read(n)) if n else {}
 
@@ -722,7 +815,9 @@ class Handler(BaseHTTPRequestHandler):
             models = [{"id": f"{p}:{m}", "label": _model_label(p, m)}
                       for p, pv in PROVIDERS.items() if pv["key"]
                       for m in pv["models"]]
-            return self._send(200, {"models": models})
+            return self._send(200, {"models": models,
+                                    "max_upload_mb": float(
+                                        USERS.get("max_upload_mb", 10))})
 
         if self.path == "/admin/verify":
             if sess["role"] != "admin":
@@ -753,13 +848,16 @@ class Handler(BaseHTTPRequestHandler):
             elif act == "limits":
                 USERS["limit"] = max(100, int(req.get("limit", 10000)))
                 USERS["window_h"] = max(0.5, float(req.get("window_h", 24)))
+                USERS["max_upload_mb"] = max(0.1, float(req.get("max_upload_mb", 10)))
                 _save_users(USERS)
             usage = _load_usage()
             return self._send(200, {"users": [{"u": x["u"], "role": x.get("role", "user"),
                                                "used": usage.get(x["u"], {}).get("tokens", 0)}
                                               for x in USERS["users"]],
                                     "limit": USERS["limit"],
-                                    "window_h": USERS["window_h"]})
+                                    "window_h": USERS["window_h"],
+                                    "max_upload_mb": float(
+                                        USERS.get("max_upload_mb", 10))})
 
         if self.path == "/admin/log":
             if req.get("pw") != ADMIN_PASSWORD:
