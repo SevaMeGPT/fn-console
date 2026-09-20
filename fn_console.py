@@ -732,9 +732,9 @@ def upstream_call(provider: str, model: str, messages: list, tools=None,
                 data = json.loads(r.read().decode())
             break
         except urllib.error.HTTPError as e:
-            if e.code < 500 or attempt == 2:
+            if (e.code < 500 and e.code != 429) or attempt == 2:
                 raise
-            time.sleep(2 * (attempt + 1))
+            time.sleep(6 * (attempt + 1))
             rq = urllib.request.Request(url, data=json.dumps(body).encode(),
                                         method="POST", headers=headers)
     usage = data.get("usage") or {}
@@ -1024,21 +1024,33 @@ class Handler(BaseHTTPRequestHandler):
 
     def _chat(self, provider: str, model: str, message: str,
               image: tuple | None = None):
-        try:
-            data, tokens = upstream_call(provider, model,
-                                         [{"role": "user", "content": message}],
-                                         system=PERSONA, image=image)
-        except urllib.error.HTTPError as e:
-            if e.code >= 500:
+        chain = [(provider, model)]
+        if provider == "openrouter":
+            for alt in PROVIDERS["openrouter"]["models"]:
+                if alt != model and alt.endswith(":free"):
+                    chain.append(("openrouter", alt))
+                if len(chain) >= 4:
+                    break
+        last_exc = None
+        for i, (pv, md) in enumerate(chain):
+            try:
+                data, tokens = upstream_call(pv, md,
+                    [{"role": "user", "content": message}],
+                    system=PERSONA, image=image)
+                reply = "".join(b.get("text", "") for b in data.get("content", [])
+                                if b.get("type") == "text") or "(empty reply)"
+                if i > 0:
+                    reply += (f"\n\n(note: {model} was busy — "
+                              f"{md.split('/')[-1]} ne jawab diya)")
+                return reply, tokens
+            except urllib.error.HTTPError as e:
+                last_exc = e
+                if e.code == 429 and i + 1 < len(chain):
+                    continue          # next free model in the chain
+                if e.code >= 500 and i + 1 < len(chain):
+                    continue
                 raise
-            # degrade: some upstreams reject images or the system field
-            data, tokens = upstream_call(provider, model,
-                                         [{"role": "user", "content": message}])
-            if image:
-                message += "\n(an attached image could not be shown to this model)"
-        reply = "".join(b.get("text", "") for b in data.get("content", [])
-                        if b.get("type") == "text") or "(empty reply)"
-        return reply, tokens
+        raise last_exc or RuntimeError("all models failed")
 
     def _code(self, provider: str, model: str, task: str,
               cwd: str = "", image: tuple | None = None):
@@ -1055,6 +1067,10 @@ class Handler(BaseHTTPRequestHandler):
                 data, tokens = upstream_call(provider, model, messages,
                                              tools=TOOLS, image=first_image)
             except urllib.error.HTTPError as e:
+                if e.code == 429:
+                    raise RuntimeError(
+                        "free model rate-limited hai — thodi der baad try karo "
+                        "ya dropdown se dusra model chuno")
                 if e.code >= 500 or first_image is None:
                     raise
                 first_image = None          # retry without the image
