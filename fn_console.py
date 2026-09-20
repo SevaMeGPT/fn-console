@@ -344,7 +344,8 @@ header button{padding:12px 9px;font-size:13px}#cd{display:none}}
 </style></head><body>
 <div id=gate class=gate>__MASCOT__
 <h1>SevaMeGPT</h1><p>bindaas chats • code karo • mast</p>
-<input id=u placeholder="username" autocomplete=username>
+<input id=u placeholder="username" autocomplete=username
+onkeydown="if(event.key==='Enter')document.getElementById('pw').focus()">
 <input id=pw type=password placeholder="password" onkeydown="if(event.key==='Enter')login()">
 <button class=go onclick=login()>Enter</button><div id=lerr style=color:#f85149;font-size:13px></div>
 </div>
@@ -791,7 +792,8 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/login":
             u = str(req.get("u", "")).strip()
             pw = str(req.get("pw", ""))
-            user = next((x for x in USERS["users"] if x["u"] == u), None)
+            user = next((x for x in USERS["users"]
+                         if x["u"].lower() == u.lower()), None)
             if not user or user["h"] != _h(pw):
                 # legacy single-password fallback maps to the admin account
                 if u == "seva" and pw == APP_PASSWORD:
