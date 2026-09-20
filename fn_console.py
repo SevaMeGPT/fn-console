@@ -18,6 +18,7 @@ import gzip
 import hashlib
 import json
 import os
+import re
 import secrets
 import subprocess
 import threading
@@ -558,8 +559,9 @@ log.insertAdjacentHTML("beforeend",`<div class="msg you">${esc(t)}</div>`);
 const gr=document.getElementById("greeter");if(gr)gr.style.display="none";
 document.getElementById("chips-chat").innerHTML="";
 window.att_chat=window.atttext_chat=null;
+window.att_chat=window.atttext_chat=null;
 const sp=document.getElementById("spin");sp.style.display="block";
-try{const d=await post("/task",{tab:"chat",model:document.getElementById("m").value,message:t});
+try{const d=await post("/task",{tab:"chat",model:document.getElementById("m").value,message:t,attach:window.att_chat||null});
 log.insertAdjacentHTML("beforeend",`<div class="msg bot">${esc(d.reply||d.error||"(empty)")}</div>`)}
 catch(e){if(e!==0)log.insertAdjacentHTML("beforeend",
 `<div class="msg bot">upar se hawa lag gayi — try again</div>`)}
@@ -573,7 +575,7 @@ if(window.att_code){t=(t||"inspect the uploaded file")+
 document.getElementById("chips-code").innerHTML="";
 window.att_code=null;
 try{const d=await post("/task",{tab:"code",model:document.getElementById("m").value,
-message:t,cwd:document.getElementById("cwd").value});
+message:t,cwd:document.getElementById("cwd").value,attach:window.att_code||null});
 for(const s of (d.steps||[]))cl.insertAdjacentHTML("beforeend",`<div class="step">${esc(s)}</div>`);
 cl.insertAdjacentHTML("beforeend",`<div class="msg bot">${esc(d.reply||d.error||"")}</div>`)}
 catch(e){if(e!==0)cl.insertAdjacentHTML("beforeend",
@@ -665,8 +667,11 @@ def _xcrypt(data: bytes, key: bytes) -> bytes:
 
 
 def upstream_call(provider: str, model: str, messages: list, tools=None,
-                  system: str | None = None) -> tuple[dict, int]:
-    """Call the upstream chat API. Returns (normalized_response, tokens_used)."""
+                  system: str | None = None,
+                  image: tuple | None = None) -> tuple[dict, int]:
+    """Call the upstream chat API. Returns (normalized_response, tokens_used).
+
+    image: (b64_str, media_type) attached to the FIRST user message."""
     p = PROVIDERS[provider]
     key = p["key"]
     if not key:
@@ -677,6 +682,21 @@ def upstream_call(provider: str, model: str, messages: list, tools=None,
             body["system"] = system
         else:
             messages = [{"role": "system", "content": system}] + messages
+    if image:
+        b64data, media = image
+        for msg in messages:
+            if msg.get("role") == "user":
+                if p["style"] == "anthropic":
+                    msg["content"] = [
+                        {"type": "image", "source": {"type": "base64",
+                         "media_type": media, "data": b64data}},
+                        {"type": "text", "text": msg["content"]}]
+                else:
+                    msg["content"] = [
+                        {"type": "text", "text": msg["content"]},
+                        {"type": "image_url", "image_url": {"url":
+                         f"data:{media};base64,{b64data}"}}]
+                break
     body["messages"] = messages
     if tools:
         if p["style"] == "anthropic":
@@ -736,6 +756,14 @@ def resolve(cwd: str, path: str):
     return p if p.is_absolute() else Path(cwd) / p
 
 
+_CTRL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
+def _clean(text: str) -> str:
+    """Strip control chars providers reject (keep \n and \t)."""
+    return _CTRL.sub("", text)
+
+
 def run_tool(name: str, inp: dict, cwd: str) -> str:
     try:
         if name == "list_dir":
@@ -743,20 +771,25 @@ def run_tool(name: str, inp: dict, cwd: str) -> str:
             return "\n".join(f"{'D' if x.is_dir() else 'F'} {x.name}"
                              for x in sorted(t.iterdir())[:200]) or "(empty)"
         if name == "read_file":
-            txt = resolve(cwd, inp["path"]).read_text(encoding="utf-8",
-                                                      errors="replace")
-            return txt[:MAX_OUT]
+            f = resolve(cwd, inp["path"])
+            head = f.open("rb").read(4096)
+            if b"\x00" in head:
+                return (f"binary file ({f.stat().st_size:,} bytes) — "
+                        "not readable as text. If it is an image, it was "
+                        "already shown to you in the conversation.")
+            return _clean(f.read_text(encoding="utf-8",
+                                       errors="replace"))[:MAX_OUT]
         if name == "write_file":
             f = resolve(cwd, inp["path"])
             f.parent.mkdir(parents=True, exist_ok=True)
             f.write_text(inp["content"], encoding="utf-8")
-            return f"written {len(inp['content'])} chars -> {f}"
+            return _clean(f"written {len(inp['content'])} chars -> {f}")
         if name == "run_cmd":
             r = subprocess.run(inp["command"], shell=True, capture_output=True,
                                text=True, timeout=MAX_CMD_SECONDS, cwd=cwd)
             out = ((r.stdout or "") + (("\n[stderr] " + r.stderr) if r.stderr else "")
                    )[:MAX_OUT]
-            return f"{out}\n[exit {r.returncode}]"
+            return _clean(f"{out}\n[exit {r.returncode}]")
         return f"unknown tool {name}"
     except Exception as e:  # noqa: BLE001
         return f"TOOL ERROR: {type(e).__name__}: {e}"
@@ -934,17 +967,37 @@ class Handler(BaseHTTPRequestHandler):
             model_id = req.get("model", "")
             provider, _, model = model_id.partition(":")
             message = req.get("message", "")
+            attach = req.get("attach", "")
+            image = None
+            if attach:
+                f = (WORKSPACE / "uploads" / Path(attach).name)
+                if f.exists():
+                    ext = f.suffix.lower()
+                    if ext in (".png", ".jpg", ".jpeg", ".webp", ".gif") \
+                            and f.stat().st_size <= 4 * 1024 * 1024:
+                        import base64 as _b64
+                        image = (_b64.b64encode(f.read_bytes()).decode(),
+                                 {".png": "image/png", ".jpg": "image/jpeg",
+                                  ".jpeg": "image/jpeg", ".webp": "image/webp",
+                                  ".gif": "image/gif"}[ext])
+                    elif f.stat().st_size <= 64 * 1024:
+                        body_txt = _clean(f.read_text(encoding="utf-8",
+                                                       errors="replace"))
+                        message = (f"[attached file: {attach}]\n" + body_txt
+                                   + "\n\n" + message)
             t0 = time.time()
             over = _usage_check(sess["user"], sess["role"])
             if over:
                 return self._send(429, {"error": over})
             try:
                 if tab == "chat":
-                    reply, tokens = self._chat(provider, model, message)
+                    reply, tokens = self._chat(provider, model, message,
+                                               image=image)
                     steps = []
                 else:
                     reply, steps, tokens = self._code(provider, model, message,
-                                                      req.get("cwd", str(WORKSPACE)))
+                                                      req.get("cwd", str(WORKSPACE)),
+                                                      image=image)
             except Exception as e:  # noqa: BLE001
                 return self._send(502, {"error": f"{type(e).__name__}: {e}"})
             _usage_record(sess["user"], sess["role"], tokens)
@@ -957,23 +1010,26 @@ class Handler(BaseHTTPRequestHandler):
 
         return self._send(404, {"error": "not found"})
 
-    def _chat(self, provider: str, model: str, message: str):
+    def _chat(self, provider: str, model: str, message: str,
+              image: tuple | None = None):
         try:
             data, tokens = upstream_call(provider, model,
                                          [{"role": "user", "content": message}],
-                                         system=PERSONA)
+                                         system=PERSONA, image=image)
         except urllib.error.HTTPError as e:
             if e.code >= 500:
                 raise
-            # some upstreams choke on the system field — degrade gracefully
+            # degrade: some upstreams reject images or the system field
             data, tokens = upstream_call(provider, model,
                                          [{"role": "user", "content": message}])
+            if image:
+                message += "\n(an attached image could not be shown to this model)"
         reply = "".join(b.get("text", "") for b in data.get("content", [])
                         if b.get("type") == "text") or "(empty reply)"
         return reply, tokens
 
     def _code(self, provider: str, model: str, task: str,
-              cwd: str = ""):
+              cwd: str = "", image: tuple | None = None):
         cwd = cwd or str(WORKSPACE)
         Path(cwd).mkdir(parents=True, exist_ok=True)
         messages = [{"role": "user", "content":
@@ -981,8 +1037,18 @@ class Handler(BaseHTTPRequestHandler):
                      "Use the tools to complete the task. Verify your work by "
                      "running it when possible. Then summarize briefly."}]
         steps, final, used = [], None, 0
+        first_image = image
         for _ in range(20):
-            data, tokens = upstream_call(provider, model, messages, tools=TOOLS)
+            try:
+                data, tokens = upstream_call(provider, model, messages,
+                                             tools=TOOLS, image=first_image)
+            except urllib.error.HTTPError as e:
+                if e.code >= 500 or first_image is None:
+                    raise
+                first_image = None          # retry without the image
+                data, tokens = upstream_call(provider, model, messages,
+                                             tools=TOOLS)
+            first_image = None
             used += tokens
             blocks = data.get("content", [])
             text = "".join(b.get("text", "") for b in blocks
@@ -1000,7 +1066,7 @@ class Handler(BaseHTTPRequestHandler):
                 steps.append(f"→ {tu['name']} {json.dumps(tu.get('input', {}))[:120]}"
                              f"\n  {str(out)[:400]}")
                 results.append({"type": "tool_result", "tool_use_id": tu["id"],
-                                "content": str(out)[:MAX_OUT]})
+                                "content": _clean(str(out))[:MAX_OUT]})
             messages.append({"role": "user", "content": results})
         return final or "max steps reached", steps, used
 
