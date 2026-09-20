@@ -514,8 +514,7 @@ let t=i.value.trim();
 if(!t&&!window.att_chat)return;i.value="";
 const log=document.getElementById("log");
 if(window.att_chat){
-const txt=window.atttext_chat?window.atttext_chat+"
-":"";
+const txt=window.atttext_chat?window.atttext_chat+"\\n":"";
 t=`[file: ${window.att_chat}]
 ${txt}
 ${t||"is file ke baare mein batao"}`}
@@ -998,5 +997,6 @@ if __name__ == "__main__":
     class Server(HTTPServer):
         allow_reuse_address = False   # Windows: blocks silent double-binds
     srv = Server(("0.0.0.0", PORT), Handler)
-    print(f"SevaMeGPT → :{PORT}")
+    print(f"SevaMeGPT -> :{PORT}")
+    srv.serve_forever()
     srv.serve_forever()
