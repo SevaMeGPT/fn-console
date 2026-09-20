@@ -141,7 +141,8 @@ pre{white-space:pre-wrap;word-break:break-word}
 <button class=on id=tb-chat onclick="tab('chat',this)">Chat</button>
 <button id=tb-code onclick="tab('code',this)">Code Agent</button>
 <button id=tb-admin onclick="tab('admin',this)">Admin</button>
-<select id=m style="margin-left:auto"></select></header>
+<span id=cd style="margin-left:auto;font-size:12px;color:#8b949e;white-space:nowrap"></span>
+<select id=m style="margin-left:12px"></select></header>
 <div class=wrap id=p-chat><div id=log></div><div id=spin style=display:none>working…</div>
 <div class=row><input id=in placeholder="ask anything…"><button class=go onclick=send()>Send</button></div></div>
 <div id=p-code class=hide><div class=row style=margin-bottom:8px>working dir:
@@ -162,28 +163,67 @@ password is validated by the server.</p></div>
 encrypted (counter-mode stream cipher, key derived from the admin password via
 PBKDF2-200k) and gzip-compressed. Download gives the raw encrypted file.</p></div></div>
 </div>
+<div id=reauth style="display:none;position:fixed;inset:0;background:rgba(1,4,9,.75);
+align-items:center;justify-content:center;z-index:9">
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:24px;min-width:320px">
+<h3 style=margin-top:0>Session expired</h3>
+<p style=color:#8b949e;font-size:12px>Your session timed out. Enter the access
+password to continue — your chat history is preserved.</p>
+<div class=row><input id=rpw type=password placeholder="access password"
+onkeydown="if(event.key==='Enter')continueSess()"><button class=go onclick=continueSess()>Continue</button></div>
+<p id=rerr style=color:#f85149;font-size:12px></p>
+</div></div>
 <script>
-let TAB="chat";
+let TAB="chat", SESS=null;
 function esc(s){const d=document.createElement("div");d.textContent=s??"";return d.innerHTML}
 function tab(t,b){TAB=t;
 document.querySelectorAll("header button[id^=tb]").forEach(x=>x.classList.remove("on"));
 b.classList.add("on");
 for(const id of ["p-chat","p-code","p-admin"])document.getElementById(id).classList.add("hide");
 document.getElementById("p-"+t).classList.remove("hide")}
+function saveSess(){try{SESS?sessionStorage.setItem("fn_sess",JSON.stringify(SESS))
+:sessionStorage.removeItem("fn_sess")}catch(e){}}
+function startCountdown(){if(window._cdT)clearInterval(window._cdT);
+const el=document.getElementById("cd");
+const paint=()=>{if(!SESS){el.textContent="";return}
+const left=Math.max(0,SESS.exp-Date.now()/1000);
+const h=String(Math.floor(left/3600)).padStart(2,"0"),
+m=String(Math.floor(left%3600/60)).padStart(2,"0"),
+s=String(Math.floor(left%60)).padStart(2,"0");
+el.textContent="session "+h+":"+m+":"+s;
+el.style.color=left<300?"#f85149":(left<1800?"#d29922":"#8b949e");
+if(left<=0)showReauth()};
+paint();window._cdT=setInterval(paint,1000)}
+function showReauth(){const o=document.getElementById("reauth");
+if(o.style.display!=="flex"){o.style.display="flex";
+const r=document.getElementById("rpw");r.value="";r.focus()}}
+async function continueSess(){const pw=document.getElementById("rpw").value;
+const r=await fetch("/login",{method:"POST",headers:{"content-type":"application/json"},
+body:JSON.stringify({pw})});
+if(r.ok){const d=await r.json();SESS={tok:d.token,exp:d.expires};saveSess();
+document.getElementById("reauth").style.display="none";
+document.getElementById("rerr").textContent="";loadModels();startCountdown()}
+else document.getElementById("rerr").textContent="wrong password"}
 async function login(){const pw=document.getElementById("pw").value;
 const r=await fetch("/login",{method:"POST",headers:{"content-type":"application/json"},
 body:JSON.stringify({pw})});
-if(r.ok){document.getElementById("gate").classList.add("hide");
-document.getElementById("app").classList.remove("hide");loadModels()}
+if(r.ok){const d=await r.json();SESS={tok:d.token,exp:d.expires};saveSess();
+document.getElementById("gate").classList.add("hide");
+document.getElementById("app").classList.remove("hide");
+loadModels();startCountdown()}
 else document.getElementById("lerr").textContent="wrong password"}
-async function loadModels(){const r=await fetch("/models");
+async function loadModels(){const r=await fetch("/models",{method:"POST",
+headers:{"content-type":"application/json","x-fn-token":(SESS?SESS.tok:"")},
+body:"{}"});
+if(r.status===401){showReauth();return}
 if(!r.ok)return;const ms=(await r.json()).models;
 const sel=document.getElementById("m");sel.innerHTML="";
 for(const m of ms){const o=document.createElement("option");o.value=m.id;
 o.textContent=m.label;sel.appendChild(o)}}
 async function post(path,body){const r=await fetch(path,{method:"POST",
-headers:{"content-type":"application/json"},body:JSON.stringify(body)});
-if(r.status===401){alert("session expired — re-login");throw 0}return r.json()}
+headers:{"content-type":"application/json","x-fn-token":(SESS?SESS.tok:"")},
+body:JSON.stringify(body)});
+if(r.status===401){showReauth();throw 0}return r.json()}
 async function send(){const i=document.getElementById("in");const t=i.value.trim();
 if(!t)return;i.value="";
 const log=document.getElementById("log");
@@ -223,6 +263,12 @@ const b=await r.blob();const a=document.createElement("a");
 a.href=URL.createObjectURL(b);
 a.download="fn_console_log_"+new Date().toISOString().slice(0,10)+".jsonl.enc.gz";
 a.click();URL.revokeObjectURL(a.href)}
+(function(){try{const s=JSON.parse(sessionStorage.getItem("fn_sess")||"null");
+if(s&&s.exp>Date.now()/1000){SESS=s;
+document.getElementById("gate").classList.add("hide");
+document.getElementById("app").classList.remove("hide");
+loadModels();startCountdown()}
+else if(s){SESS=null;saveSess()}}catch(e){}})();
 </script></body></html>"""
 
 
@@ -351,7 +397,8 @@ class Handler(BaseHTTPRequestHandler):
                 TOKENS[tok] = time.time() + 12 * 3600
                 for k in [k for k, v in TOKENS.items() if v < time.time()]:
                     TOKENS.pop(k)
-                return self._send(200, {"token": tok})
+                return self._send(200, {"token": tok,
+                                        "expires": TOKENS[tok]})
             return self._send(401, {"error": "wrong password"})
 
         if self.headers.get("x-api-key", "") == STATIC_API_KEY:
