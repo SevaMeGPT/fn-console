@@ -256,8 +256,8 @@ stroke-width="4" stroke-linecap="round"/>
 </g>
 <g id="head">
 <ellipse cx="120" cy="100" rx="46" ry="48" fill="#e0a370"/>
-<ellipse cx="74" cy="104" rx="8" ry="11" fill="#d0925e"/>
-<ellipse cx="166" cy="104" rx="8" ry="11" fill="#d0925e"/>
+
+
 <g id="eyes">
 <ellipse cx="102" cy="90" rx="8" ry="9" fill="#fff"/>
 <ellipse cx="138" cy="90" rx="8" ry="9" fill="#fff"/>
@@ -269,45 +269,37 @@ stroke-width="4" stroke-linecap="round"/>
 </g>
 </g>
 <g id="beard">
-<path d="M72 100 C70 116 70 132 74 148 C78 176 90 204 104 216
-C110 222 116 224 120 224 C124 224 130 222 136 216 C150 204 162 176 166 148
-C170 132 170 116 168 100 C166 108 158 114 148 116 C140 124 132 127 120 127
-C108 127 100 124 92 116 C82 114 74 108 72 100 Z" fill="#4a2c17"/>
-<path d="M80 118 C80 142 88 172 100 192" stroke="#5d3a22" stroke-width="4.5"
+<path d="M73 110 C71 124 71 138 75 152 C79 178 90 204 104 216
+C110 222 116 224 120 224 C124 224 130 222 136 216 C150 204 161 178 165 152
+C169 138 169 124 167 110 C165 117 157 123 147 125 C139 132 131 135 120 135
+C109 135 101 132 93 125 C83 123 75 117 73 110 Z" fill="#4a2c17"/>
+<path d="M81 126 C81 148 88 174 100 194" stroke="#5d3a22" stroke-width="4.5"
 fill="none" stroke-linecap="round" opacity=".9"/>
-<path d="M96 124 C95 148 100 176 110 198" stroke="#6b4426" stroke-width="3"
+<path d="M97 132 C96 152 100 178 110 200" stroke="#6b4426" stroke-width="3"
 fill="none" stroke-linecap="round" opacity=".8"/>
-<path d="M160 118 C160 142 152 172 140 192" stroke="#5d3a22" stroke-width="4.5"
+<path d="M159 126 C159 148 152 174 140 194" stroke="#5d3a22" stroke-width="4.5"
 fill="none" stroke-linecap="round" opacity=".9"/>
-<path d="M144 124 C145 148 140 176 130 198" stroke="#6b4426" stroke-width="3"
+<path d="M143 132 C144 152 140 178 130 200" stroke="#6b4426" stroke-width="3"
 fill="none" stroke-linecap="round" opacity=".8"/>
-<path d="M120 128 L120 206" stroke="#5d3a22" stroke-width="3" fill="none"
+<path d="M120 136 L120 206" stroke="#5d3a22" stroke-width="3" fill="none"
 stroke-linecap="round" opacity=".5"/>
 </g>
 <g id="safa">
-<path d="M96 60 C88 28 118 6 150 16 C176 24 186 48 176 66
-C166 80 142 84 124 78 C108 72 98 70 96 60 Z" fill="#e2702c"/>
-<path d="M96 60 C88 28 118 6 150 16" fill="none" stroke="#c95f1f"
-stroke-width="4" stroke-linecap="round" opacity=".8"/>
-<path d="M62 74 C54 34 96 8 134 20 C170 31 184 60 172 78
-C160 92 84 92 62 74 Z" fill="#ff9950"/>
-<path d="M62 74 C58 40 88 14 126 18" fill="none" stroke="#ffb26e"
-stroke-width="5" stroke-linecap="round" opacity=".9"/>
-<path d="M70 52 C92 38 152 36 170 56" fill="none" stroke="#e2702c"
-stroke-width="5" stroke-linecap="round" opacity=".9"/>
-<path d="M78 34 C104 22 148 24 164 42" fill="none" stroke="#e2702c"
-stroke-width="4" stroke-linecap="round" opacity=".7"/>
-<path d="M112 22 C104 36 100 48 102 60" stroke="#e2702c" stroke-width="4"
-fill="none" stroke-linecap="round" opacity=".85"/>
-<path d="M138 24 C146 36 150 46 148 58" stroke="#e2702c" stroke-width="4"
-fill="none" stroke-linecap="round" opacity=".85"/>
-<rect x="78" y="58" width="84" height="12" rx="6" fill="#f6c453"/>
-<path d="M88 60 L88 68 M102 60 L102 68 M116 60 L116 68 M130 60 L130 68
-M144 60 L144 68" stroke="#d9a63c" stroke-width="2"/>
-<circle cx="120" cy="64" r="7" fill="#f6c453"/>
-<circle cx="120" cy="64" r="3.4" fill="#d64545"/>
-<circle cx="118.6" cy="62.6" r="1.1" fill="#fff"/>
-</g>
+<path d="M62 58 C56 12 184 12 178 58 C178 70 164 77 120 77 C76 77 62 70 62 58 Z"
+fill="#ff9950"/>
+<path d="M62 56 C68 30 92 20 120 20 C148 20 172 30 178 56" fill="#ffb26e"/>
+<path d="M148 22 C160 14 176 20 178 34 C179 44 172 50 166 48 C158 42 152 32 148 22 Z"
+fill="#ff9950"/>
+<path d="M148 22 C160 14 176 20 178 34" fill="none" stroke="#e2702c"
+stroke-width="3" stroke-linecap="round"/>
+<path d="M120 20 L120 62" stroke="#e2702c" stroke-width="3.5" stroke-linecap="round"
+opacity=".45"/>
+<path d="M88 24 C80 36 76 46 77 58" stroke="#e2702c" stroke-width="3.5"
+stroke-linecap="round" opacity=".45" fill="none"/>
+<rect x="74" y="52" width="92" height="11" rx="5.5" fill="#f6c453"/>
+<circle cx="120" cy="57.5" r="7" fill="#f6c453"/>
+<circle cx="120" cy="57.5" r="3.4" fill="#d64545"/>
+<circle cx="118.6" cy="56.1" r="1.1" fill="#fff"/>
 </g>
 </g></svg>"""
 
