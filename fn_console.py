@@ -400,8 +400,8 @@ __MASCOT__
 <button class=clip id=mic-chat title="voice input" onclick=mic('chat')>🎤</button>
 <button class=clip title="attach file" onclick="document.getElementById('file-chat').click()">&#128206;</button>
 <input id=file-chat type=file class=hide onchange=uploadFile('chat')>
-<input id=in placeholder="ask anything…">
-<button class=go onclick=send()>Send</button></div></div></div>
+<input id=in placeholder="ask anything…" onkeydown="if(event.key==='Enter')send()">
+<button class=go id=sendbtn onclick=send()>Send</button></div></div></div>
 <div id=p-code class=hide><div class=row style=margin-bottom:8px>working dir:
 <input id=cwd value="/app/workspace" style=flex:1></div>
 <div id=clog></div><div id=cspin class=spin>agent working…</div>
@@ -410,8 +410,8 @@ __MASCOT__
 <button class=clip id=mic-code title="voice input" onclick=mic('code')>🎤</button>
 <button class=clip title="attach file" onclick="document.getElementById('file-code').click()">&#128206;</button>
 <input id=file-code type=file class=hide onchange=uploadFile('code')>
-<input id=task placeholder="describe the coding task…">
-<button class=go onclick=code()>Run</button></div></div></div>
+<input id=task placeholder="describe the coding task…" onkeydown="if(event.key==='Enter')code()">
+<button class=go id=runbtn onclick=code()>Run</button></div></div></div>
 <div id=p-admin class=hide>
 <div id=alock class=card style="max-width:420px;margin:20px auto"><h3>Admin area</h3>
 <div class=row style=position:static;background:none><input id=apw0 type=password placeholder="admin password" style=flex:1 onkeydown="if(event.key==='Enter')admUnlock()"><button class=go onclick=admUnlock()>Unlock</button></div>
@@ -509,9 +509,17 @@ const pref=["nemotron-3-ultra","ling-3.0-flash","qwen3","deepseek","gemma"];
 const def=[...sel.options].find(o=>o.label.includes("free")&&
 pref.some(p=>o.value.toLowerCase().includes(p)));
 if(def)sel.value=def.value;}
-async function post(path,body){const r=await fetch(path,{method:"POST",
+let BUSY=false;
+async function post(path,body){if(BUSY){throw 0}BUSY=true;
+const ctrl=new AbortController();const tm=setTimeout(()=>ctrl.abort(),240000);
+let r;
+try{r=await fetch(path,{method:"POST",signal:ctrl.signal,
 headers:{"content-type":"application/json","x-fn-token":(SESS?SESS.tok:"")},
-body:JSON.stringify(body)});
+body:JSON.stringify(body)});}
+catch(e){clearTimeout(tm);BUSY=false;
+if(e.name==="AbortError")alert("upstream ne 4 minute diya, phir bhi jawab nahi — dobara try karo");
+else alert("network error — dobara try karo");throw 0}
+clearTimeout(tm);BUSY=false;
 if(r.status===401){showReauth();throw 0}
 const d=await r.json();if(r.status===429){alert(d.error||"limit reached");throw 0}return d}
 async function uploadFile(tab){const inp=document.getElementById("file-"+tab);
@@ -561,15 +569,17 @@ document.getElementById("chips-chat").innerHTML="";
 window.att_chat=window.atttext_chat=null;
 window.att_chat=window.atttext_chat=null;
 const sp=document.getElementById("spin");sp.style.display="block";
+const sb=document.getElementById("sendbtn");if(sb)sb.disabled=true;
 try{const d=await post("/task",{tab:"chat",model:document.getElementById("m").value,message:t,attach:window.att_chat||null});
 log.insertAdjacentHTML("beforeend",`<div class="msg bot">${esc(d.reply||d.error||"(empty)")}</div>`)}
 catch(e){if(e!==0)log.insertAdjacentHTML("beforeend",
 `<div class="msg bot">upar se hawa lag gayi — try again</div>`)}
-sp.style.display="none"}
+sp.style.display="none";if(typeof sb!=='undefined')sb.disabled=false}
 async function code(){const i=document.getElementById("task");
 let t=i.value.trim();
 if(!t&&!window.att_code)return;i.value="";const cl=document.getElementById("clog");
 const sp=document.getElementById("cspin");sp.style.display="block";
+const rb=document.getElementById("runbtn");if(rb)rb.disabled=true;
 if(window.att_code){t=(t||"inspect the uploaded file")+
 `; the file is at uploads/${window.att_code} in the working directory`}
 document.getElementById("chips-code").innerHTML="";
@@ -580,7 +590,7 @@ for(const s of (d.steps||[]))cl.insertAdjacentHTML("beforeend",`<div class="step
 cl.insertAdjacentHTML("beforeend",`<div class="msg bot">${esc(d.reply||d.error||"")}</div>`)}
 catch(e){if(e!==0)cl.insertAdjacentHTML("beforeend",
 `<div class="msg bot">agent ne haath khada kar diya — try again</div>`)}
-sp.style.display="none"}
+sp.style.display="none";if(typeof rb!=='undefined')rb.disabled=false}
 async function admUnlock(){const pw=document.getElementById("apw0").value;
 const r=await fetch("/admin/verify",{method:"POST",
 headers:{"content-type":"application/json","x-fn-token":(SESS?SESS.tok:"")},
@@ -986,7 +996,8 @@ class Handler(BaseHTTPRequestHandler):
                         message = (f"[attached file: {attach}]\n" + body_txt
                                    + "\n\n" + message)
             t0 = time.time()
-            over = _usage_check(sess["user"], sess["role"])
+            free_model = (":free" in model) or model.endswith("-free")
+            over = None if free_model else _usage_check(sess["user"], sess["role"])
             if over:
                 return self._send(429, {"error": over})
             try:
@@ -1000,7 +1011,8 @@ class Handler(BaseHTTPRequestHandler):
                                                       image=image)
             except Exception as e:  # noqa: BLE001
                 return self._send(502, {"error": f"{type(e).__name__}: {e}"})
-            _usage_record(sess["user"], sess["role"], tokens)
+            if not free_model:
+                _usage_record(sess["user"], sess["role"], tokens)
             self._archive({"kind": tab, "user": sess["user"], "provider": provider,
                            "model": model, "request": message, "reply": reply,
                            "steps": steps, "secs": round(time.time() - t0, 1),
