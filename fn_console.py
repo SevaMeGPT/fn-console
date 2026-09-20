@@ -218,7 +218,7 @@ def _model_label(pid: str, mid: str) -> str:
     """Dropdown label: short name · free/provider · code/chat."""
     short = mid.split("/")[-1].replace(":free", "").replace("-", " ").strip()
     kind = "code" if any(k in mid.lower() for k in ("coder", "code", "dev")) else "chat"
-    tag = "free" if (":free" in mid or mid.endswith("-free")) else pid
+    tag = "free" if (":free" in mid or mid.endswith("-free")) else f"{pid} (Limited use)"
     return f"{short} · {tag} · {kind}"
 
 
