@@ -780,9 +780,16 @@ class Handler(BaseHTTPRequestHandler):
         return self._send(404, {"error": "not found"})
 
     def _chat(self, provider: str, model: str, message: str):
-        data, tokens = upstream_call(provider, model,
-                                     [{"role": "user", "content": message}],
-                                     system=PERSONA)
+        try:
+            data, tokens = upstream_call(provider, model,
+                                         [{"role": "user", "content": message}],
+                                         system=PERSONA)
+        except urllib.error.HTTPError as e:
+            if e.code >= 500:
+                raise
+            # some upstreams choke on the system field — degrade gracefully
+            data, tokens = upstream_call(provider, model,
+                                         [{"role": "user", "content": message}])
         reply = "".join(b.get("text", "") for b in data.get("content", [])
                         if b.get("type") == "text") or "(empty reply)"
         return reply, tokens
