@@ -235,67 +235,79 @@ TOOLS = [
                       "required": ["command"]}},
 ]
 
-MASCOT = """<svg id="pehlwan" viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg">
-<style>#pehlwan #head{transform-box:fill-box;transform-origin:50% 80%;
+MASCOT = """<svg id="pehlwan" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+<style>#pehlwan #head{transform-box:fill-box;transform-origin:50% 78%;
 transition:transform .35s cubic-bezier(.34,1.56,.64,1);
 animation:idle 3.4s ease-in-out infinite}
-#pehlwan #beard{transform-box:fill-box;transform-origin:50% 6%}
+#pehlwan #beard{transform-box:fill-box;transform-origin:50% 4%}
 #pehlwan.swing #beard{animation:bw .75s cubic-bezier(.36,.07,.19,.97)}
 #pehlwan #eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
-@keyframes bw{0%,100%{transform:rotate(0)}22%{transform:rotate(13deg)}
-48%{transform:rotate(-10deg)}72%{transform:rotate(6deg)}}
-@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(3px) rotate(-1.6deg)}}
+#pehlwan #pupils{transition:transform .18s ease-out}
+@keyframes bw{0%,100%{transform:rotate(0)}22%{transform:rotate(12deg)}
+48%{transform:rotate(-9deg)}72%{transform:rotate(5deg)}}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(3px) rotate(-1.4deg)}}
 @keyframes blink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.12)}}
 </style>
 <g id="body">
-<path d="M34 210 C34 166 64 148 100 148 C136 148 166 166 166 210 Z" fill="#1f6feb"/>
-<path d="M34 210 C34 166 64 148 100 148 L100 210 Z" fill="#1a5fd0"/>
-<path d="M100 148 L100 210" stroke="#164ba8" stroke-width="2"/>
-<rect x="89" y="140" width="22" height="16" rx="6" fill="#c98a4b"/>
+<path d="M48 240 C48 190 76 168 120 168 C164 168 192 190 192 240 Z" fill="#f2e9d8"/>
+<path d="M48 240 C48 190 76 168 120 168 L120 240 Z" fill="#e6dac2"/>
+<path d="M104 168 L120 186 L136 168" fill="none" stroke="#c9b892"
+stroke-width="4" stroke-linecap="round"/>
 </g>
 <g id="head">
-<ellipse cx="100" cy="96" rx="41" ry="43" fill="#d99b66"/>
-<ellipse cx="58" cy="99" rx="7" ry="10" fill="#c98a4b"/>
-<ellipse cx="142" cy="99" rx="7" ry="10" fill="#c98a4b"/>
+<ellipse cx="120" cy="100" rx="46" ry="48" fill="#e0a370"/>
+<ellipse cx="74" cy="104" rx="8" ry="11" fill="#d0925e"/>
+<ellipse cx="166" cy="104" rx="8" ry="11" fill="#d0925e"/>
 <g id="eyes">
-<ellipse cx="83" cy="84" rx="7.5" ry="8.5" fill="#fff"/>
-<ellipse cx="117" cy="84" rx="7.5" ry="8.5" fill="#fff"/>
-<circle cx="84.5" cy="85" r="3.8" fill="#141414"/>
-<circle cx="118.5" cy="85" r="3.8" fill="#141414"/>
-<circle cx="86" cy="83.4" r="1.4" fill="#fff"/>
-<circle cx="120" cy="83.4" r="1.4" fill="#fff"/>
+<ellipse cx="102" cy="92" rx="7.5" ry="8.5" fill="#fff"/>
+<ellipse cx="138" cy="92" rx="7.5" ry="8.5" fill="#fff"/>
+<g id="pupils">
+<circle cx="103.5" cy="93.5" r="4.2" fill="#141414"/>
+<circle cx="139.5" cy="93.5" r="4.2" fill="#141414"/>
+<circle cx="105" cy="92" r="1.5" fill="#fff"/>
+<circle cx="141" cy="92" r="1.5" fill="#fff"/>
+</g>
 </g>
 <g id="beard">
-<path d="M61 100 C59 94 65 90 71 94 C80 99 120 99 129 94 C135 90 141 94 139 100
-C143 132 133 166 117 180 C110 186 104 189 100 189 C96 189 90 186 83 180
-C67 166 57 132 61 100 Z" fill="#2e1a10"/>
-<path d="M69 104 C68 126 74 154 86 168" stroke="#4a2c17" stroke-width="4"
+<path d="M76 106 C74 100 80 96 87 100 C96 106 144 106 153 100 C160 96 166 100 164 106
+C170 140 162 188 142 210 C134 220 126 224 120 224 C114 224 106 220 98 210
+C78 188 70 140 76 106 Z" fill="#3b2314"/>
+<path d="M84 110 C82 134 88 168 100 190" stroke="#55341d" stroke-width="5"
 fill="none" stroke-linecap="round"/>
-<path d="M100 100 L100 174" stroke="#452916" stroke-width="4" fill="none"
-stroke-linecap="round" opacity=".65"/>
-<path d="M131 104 C132 126 126 154 114 168" stroke="#4a2c17" stroke-width="4"
+<path d="M120 106 L120 208" stroke="#4a2c17" stroke-width="5" fill="none"
+stroke-linecap="round" opacity=".8"/>
+<path d="M156 110 C158 134 152 168 140 190" stroke="#55341d" stroke-width="5"
 fill="none" stroke-linecap="round"/>
-<path d="M77 110 C75 132 81 158 91 170" stroke="#5d3a22" stroke-width="2.5"
-fill="none" stroke-linecap="round" opacity=".8"/>
-<path d="M123 110 C125 132 119 158 109 170" stroke="#5d3a22" stroke-width="2.5"
-fill="none" stroke-linecap="round" opacity=".8"/>
+<path d="M92 116 C90 140 96 166 106 186" stroke="#6b4426" stroke-width="3"
+fill="none" stroke-linecap="round" opacity=".85"/>
+<path d="M148 116 C150 140 144 166 134 186" stroke="#6b4426" stroke-width="3"
+fill="none" stroke-linecap="round" opacity=".85"/>
+<path d="M84 176 C92 186 102 191 120 191 C138 191 148 186 156 176
+C152 192 142 208 134 214 C126 221 114 221 106 214 C98 208 88 192 84 176 Z"
+fill="#2e1a10" opacity=".55"/>
 </g>
 <g id="safa">
-<path d="M146 44 C172 36 188 50 182 76 C178 94 164 102 152 94
-C160 80 158 60 146 44 Z" fill="#ff8c42"/>
-<path d="M146 44 C172 36 188 50 182 76" fill="none" stroke="#e2702c"
-stroke-width="3" stroke-linecap="round"/>
-<path d="M52 62 C48 24 152 24 148 62 C148 72 138 77 100 77 C62 77 52 72 52 62 Z"
-fill="#ff8c42"/>
-<path d="M52 62 C58 40 78 30 100 30 C122 30 142 40 148 62" fill="#ffa45e"/>
-<path d="M52 60 C62 70 138 70 148 60 L148 68 C138 78 62 78 52 68 Z" fill="#e2702c"/>
-<path d="M100 30 C90 42 86 52 88 64" stroke="#e2702c" stroke-width="3"
-fill="none" stroke-linecap="round" opacity=".85"/>
-<path d="M114 31 C122 42 126 52 124 64" stroke="#e2702c" stroke-width="3"
-fill="none" stroke-linecap="round" opacity=".85"/>
-<rect x="64" y="55" width="72" height="10" rx="5" fill="#f6c453"/>
-<circle cx="100" cy="60" r="6" fill="#f6c453"/>
-<circle cx="100" cy="60" r="2.8" fill="#d64545"/>
+<path d="M168 46 C198 36 216 52 210 82 C206 102 190 112 176 102
+C186 84 184 62 168 46 Z" fill="#ff9950"/>
+<path d="M168 46 C198 36 216 52 210 82" fill="none" stroke="#e2702c"
+stroke-width="4" stroke-linecap="round"/>
+<path d="M170 46 C192 42 206 54 203 74" fill="none" stroke="#ffc08a"
+stroke-width="3" stroke-linecap="round" opacity=".7"/>
+<path d="M70 62 C64 18 176 18 170 62 C170 74 158 80 120 80 C82 80 70 74 70 62 Z"
+fill="#ff9950"/>
+<path d="M70 62 C76 36 98 26 120 26 C142 26 164 36 170 62" fill="#ffb26e"/>
+<path d="M96 28 C86 42 82 54 84 68" stroke="#e2702c" stroke-width="5"
+fill="none" stroke-linecap="round" opacity=".9"/>
+<path d="M144 28 C154 42 158 54 156 68" stroke="#e2702c" stroke-width="5"
+fill="none" stroke-linecap="round" opacity=".9"/>
+<path d="M120 26 L120 66" stroke="#e2702c" stroke-width="4" stroke-linecap="round"
+opacity=".55"/>
+<rect x="80" y="55" width="80" height="12" rx="6" fill="#f6c453"/>
+<path d="M88 57 L88 65 M100 57 L100 65 M112 57 L112 65 M124 57 L124 65
+M136 57 L136 65 M148 57 L148 65" stroke="#d9a63c" stroke-width="2"/>
+<circle cx="120" cy="61" r="7.5" fill="#f6c453"/>
+<circle cx="120" cy="61" r="3.6" fill="#d64545"/>
+<circle cx="118.6" cy="59.6" r="1.1" fill="#fff"/>
 </g>
 </g></svg>"""
 
@@ -543,7 +555,9 @@ const head=sv.querySelector("#head");
 let raf=null;
 function aim(dx,dy){const a=Math.max(-14,Math.min(14,dx*.05));
 const y=Math.max(-6,Math.min(6,dy*.04));
-head.style.transform=`translate(${Math.max(-5,Math.min(5,dx*.02))}px,${y}px) rotate(${a}deg)`}
+head.style.transform=`translate(${Math.max(-5,Math.min(5,dx*.02))}px,${y}px) rotate(${a}deg)`;
+const pu=document.getElementById("pupils");
+if(pu)pu.style.transform=`translate(${Math.max(-3,Math.min(3,dx*.012))}px,${Math.max(-2.5,Math.min(2.5,dy*.012))}px)`}
 function swing(){sv.classList.remove("swing");void sv.offsetWidth;sv.classList.add("swing")}
 window.addEventListener("mousemove",e=>{if(raf)return;raf=requestAnimationFrame(()=>{
 const r=sv.getBoundingClientRect();
