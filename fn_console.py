@@ -236,37 +236,67 @@ TOOLS = [
 ]
 
 MASCOT = """<svg id="pehlwan" viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg">
-<style>#pehlwan #head{transform-box:fill-box;transform-origin:50% 85%;
-transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
-#pehlwan #beard{transform-box:fill-box;transform-origin:50% 0%}
-#pehlwan.swing #beard{animation:bw .5s ease-in-out}
-#pehlwan #head{animation:idle 3.2s ease-in-out infinite}
-@keyframes bw{0%,100%{transform:rotate(0)}25%{transform:rotate(9deg)}
-60%{transform:rotate(-7deg)}}
-@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(3px) rotate(-1.2deg)}}
+<style>#pehlwan #head{transform-box:fill-box;transform-origin:50% 80%;
+transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+animation:idle 3.4s ease-in-out infinite}
+#pehlwan #beard{transform-box:fill-box;transform-origin:50% 6%}
+#pehlwan.swing #beard{animation:bw .75s cubic-bezier(.36,.07,.19,.97)}
+#pehlwan #eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
+@keyframes bw{0%,100%{transform:rotate(0)}22%{transform:rotate(13deg)}
+48%{transform:rotate(-10deg)}72%{transform:rotate(6deg)}}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(3px) rotate(-1.6deg)}}
+@keyframes blink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.12)}}
 </style>
-<g id="body"><path d="M40 208 C40 168 68 150 100 150 C132 150 160 168 160 208 Z"
-fill="#1f6feb"/><path d="M40 208 C40 168 68 150 100 150 L100 208 Z" fill="#1a5fd0"/>
-<rect x="88" y="146" width="24" height="18" rx="6" fill="#c98a4b"/></g>
-<g id="head"><g id="beard">
-<path d="M100 118 c-15 0 -21 12 -19 24 c1 8 8 14 19 14 c11 0 18 -6 19 -14
-c2 -12 -4 -24 -19 -24z" fill="#4a2c17"/>
-<path d="M100 128 c-8 0 -12 6 -11 12 c1 5 5 8 11 8 c6 0 10 -3 11 -8
-c1 -6 -3 -12 -11 -12z" fill="#5d3a22"/>
+<g id="body">
+<path d="M34 210 C34 166 64 148 100 148 C136 148 166 166 166 210 Z" fill="#1f6feb"/>
+<path d="M34 210 C34 166 64 148 100 148 L100 210 Z" fill="#1a5fd0"/>
+<path d="M100 148 L100 210" stroke="#164ba8" stroke-width="2"/>
+<rect x="89" y="140" width="22" height="16" rx="6" fill="#c98a4b"/>
 </g>
-<ellipse cx="100" cy="98" rx="42" ry="44" fill="#d99b66"/>
-<ellipse cx="58" cy="100" rx="7" ry="10" fill="#c98a4b"/>
-<ellipse cx="142" cy="100" rx="7" ry="10" fill="#c98a4b"/>
-<path d="M62 62 C62 30 138 30 138 62 C138 70 130 74 100 74 C70 74 62 70 62 62z"
+<g id="head">
+<ellipse cx="100" cy="96" rx="41" ry="43" fill="#d99b66"/>
+<ellipse cx="58" cy="99" rx="7" ry="10" fill="#c98a4b"/>
+<ellipse cx="142" cy="99" rx="7" ry="10" fill="#c98a4b"/>
+<g id="eyes">
+<ellipse cx="83" cy="84" rx="7.5" ry="8.5" fill="#fff"/>
+<ellipse cx="117" cy="84" rx="7.5" ry="8.5" fill="#fff"/>
+<circle cx="84.5" cy="85" r="3.8" fill="#141414"/>
+<circle cx="118.5" cy="85" r="3.8" fill="#141414"/>
+<circle cx="86" cy="83.4" r="1.4" fill="#fff"/>
+<circle cx="120" cy="83.4" r="1.4" fill="#fff"/>
+</g>
+<g id="beard">
+<path d="M61 100 C59 94 65 90 71 94 C80 99 120 99 129 94 C135 90 141 94 139 100
+C143 132 133 166 117 180 C110 186 104 189 100 189 C96 189 90 186 83 180
+C67 166 57 132 61 100 Z" fill="#2e1a10"/>
+<path d="M69 104 C68 126 74 154 86 168" stroke="#4a2c17" stroke-width="4"
+fill="none" stroke-linecap="round"/>
+<path d="M100 100 L100 174" stroke="#452916" stroke-width="4" fill="none"
+stroke-linecap="round" opacity=".65"/>
+<path d="M131 104 C132 126 126 154 114 168" stroke="#4a2c17" stroke-width="4"
+fill="none" stroke-linecap="round"/>
+<path d="M77 110 C75 132 81 158 91 170" stroke="#5d3a22" stroke-width="2.5"
+fill="none" stroke-linecap="round" opacity=".8"/>
+<path d="M123 110 C125 132 119 158 109 170" stroke="#5d3a22" stroke-width="2.5"
+fill="none" stroke-linecap="round" opacity=".8"/>
+</g>
+<g id="safa">
+<path d="M146 44 C172 36 188 50 182 76 C178 94 164 102 152 94
+C160 80 158 60 146 44 Z" fill="#ff8c42"/>
+<path d="M146 44 C172 36 188 50 182 76" fill="none" stroke="#e2702c"
+stroke-width="3" stroke-linecap="round"/>
+<path d="M52 62 C48 24 152 24 148 62 C148 72 138 77 100 77 C62 77 52 72 52 62 Z"
 fill="#ff8c42"/>
-<path d="M62 62 C66 52 80 47 100 47 C120 47 134 52 138 62" fill="none"
-stroke="#e2702c" stroke-width="5" stroke-linecap="round"/>
-<path d="M138 58 C160 54 172 62 168 84 C166 96 156 100 148 94" fill="#ff8c42"/>
-<circle cx="83" cy="97" r="5" fill="#1b1b1b"/><circle cx="117" cy="97" r="5" fill="#1b1b1b"/>
-<circle cx="84.5" cy="95.5" r="1.6" fill="#fff"/><circle cx="118.5" cy="95.5" r="1.6" fill="#fff"/>
-<path d="M74 86 q9 -6 18 -1" stroke="#4a2c17" stroke-width="3" fill="none" stroke-linecap="round"/>
-<path d="M108 85 q9 -5 18 1" stroke="#4a2c17" stroke-width="3" fill="none" stroke-linecap="round"/>
-<path d="M88 118 q12 8 24 0" stroke="#3a2312" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M52 62 C58 40 78 30 100 30 C122 30 142 40 148 62" fill="#ffa45e"/>
+<path d="M52 60 C62 70 138 70 148 60 L148 68 C138 78 62 78 52 68 Z" fill="#e2702c"/>
+<path d="M100 30 C90 42 86 52 88 64" stroke="#e2702c" stroke-width="3"
+fill="none" stroke-linecap="round" opacity=".85"/>
+<path d="M114 31 C122 42 126 52 124 64" stroke="#e2702c" stroke-width="3"
+fill="none" stroke-linecap="round" opacity=".85"/>
+<rect x="64" y="55" width="72" height="10" rx="5" fill="#f6c453"/>
+<circle cx="100" cy="60" r="6" fill="#f6c453"/>
+<circle cx="100" cy="60" r="2.8" fill="#d64545"/>
+</g>
 </g></svg>"""
 
 PAGE = """<!doctype html><html><head><meta charset=utf-8><meta name=viewport
@@ -324,9 +354,14 @@ header button{padding:12px 9px;font-size:13px}#cd{display:none}}
 <button class=go onclick=login()>Enter</button><div id=lerr style=color:#f85149;font-size:13px></div>
 </div>
 <div id=app class=hide><header><span class=t><svg viewBox="0 0 200 210" width=26 height=27>
-<circle cx="100" cy="60" r="34" fill="#ff8c42"/><circle cx="100" cy="92" r="26" fill="#d99b66"/>
-<rect x="94" y="106" width="12" height="8" rx="3" fill="#4a2c17"/>
-<path d="M55 200 C55 158 75 142 100 142 C125 142 145 158 145 200 Z" fill="#1f6feb"/></svg>
+<path d="M55 200 C55 158 75 142 100 142 C125 142 145 158 145 200 Z" fill="#1f6feb"/>
+<ellipse cx="100" cy="88" rx="30" ry="31" fill="#d99b66"/>
+<path d="M72 84 C70 106 78 126 100 132 C122 126 130 106 128 84
+C120 78 80 78 72 84 Z" fill="#2e1a10"/>
+<circle cx="89" cy="76" r="4" fill="#141414"/><circle cx="111" cy="76" r="4" fill="#141414"/>
+<path d="M66 58 C66 30 134 30 134 58 C134 66 66 66 66 58 Z" fill="#ff8c42"/>
+<rect x="74" y="52" width="52" height="7" rx="3.5" fill="#f6c453"/>
+</svg>
 SevaMeGPT</span>
 <button class=on id=tb-chat onclick="tab('chat',this)">Chat</button>
 <button id=tb-code onclick="tab('code',this)">Code Agent</button>
