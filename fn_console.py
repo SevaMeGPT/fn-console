@@ -285,27 +285,29 @@ fill="none" stroke-linecap="round" opacity=".8"/>
 stroke-linecap="round" opacity=".5"/>
 </g>
 <g id="safa">
-<path d="M168 46 C198 36 216 52 210 82 C206 102 190 112 176 102
-C186 84 184 62 168 46 Z" fill="#ff9950"/>
-<path d="M168 46 C198 36 216 52 210 82" fill="none" stroke="#e2702c"
-stroke-width="4" stroke-linecap="round"/>
-<path d="M170 46 C192 42 206 54 203 74" fill="none" stroke="#ffc08a"
-stroke-width="3" stroke-linecap="round" opacity=".7"/>
-<path d="M70 62 C64 18 176 18 170 62 C170 74 158 80 120 80 C82 80 70 74 70 62 Z"
-fill="#ff9950"/>
-<path d="M70 62 C76 36 98 26 120 26 C142 26 164 36 170 62" fill="#ffb26e"/>
-<path d="M96 28 C86 42 82 54 84 68" stroke="#e2702c" stroke-width="5"
-fill="none" stroke-linecap="round" opacity=".9"/>
-<path d="M144 28 C154 42 158 54 156 68" stroke="#e2702c" stroke-width="5"
-fill="none" stroke-linecap="round" opacity=".9"/>
-<path d="M120 26 L120 66" stroke="#e2702c" stroke-width="4" stroke-linecap="round"
-opacity=".55"/>
-<rect x="80" y="55" width="80" height="12" rx="6" fill="#f6c453"/>
-<path d="M88 57 L88 65 M100 57 L100 65 M112 57 L112 65 M124 57 L124 65
-M136 57 L136 65 M148 57 L148 65" stroke="#d9a63c" stroke-width="2"/>
-<circle cx="120" cy="61" r="7.5" fill="#f6c453"/>
-<circle cx="120" cy="61" r="3.6" fill="#d64545"/>
-<circle cx="118.6" cy="59.6" r="1.1" fill="#fff"/>
+<path d="M96 60 C88 28 118 6 150 16 C176 24 186 48 176 66
+C166 80 142 84 124 78 C108 72 98 70 96 60 Z" fill="#e2702c"/>
+<path d="M96 60 C88 28 118 6 150 16" fill="none" stroke="#c95f1f"
+stroke-width="4" stroke-linecap="round" opacity=".8"/>
+<path d="M62 74 C54 34 96 8 134 20 C170 31 184 60 172 78
+C160 92 84 92 62 74 Z" fill="#ff9950"/>
+<path d="M62 74 C58 40 88 14 126 18" fill="none" stroke="#ffb26e"
+stroke-width="5" stroke-linecap="round" opacity=".9"/>
+<path d="M70 52 C92 38 152 36 170 56" fill="none" stroke="#e2702c"
+stroke-width="5" stroke-linecap="round" opacity=".9"/>
+<path d="M78 34 C104 22 148 24 164 42" fill="none" stroke="#e2702c"
+stroke-width="4" stroke-linecap="round" opacity=".7"/>
+<path d="M112 22 C104 36 100 48 102 60" stroke="#e2702c" stroke-width="4"
+fill="none" stroke-linecap="round" opacity=".85"/>
+<path d="M138 24 C146 36 150 46 148 58" stroke="#e2702c" stroke-width="4"
+fill="none" stroke-linecap="round" opacity=".85"/>
+<rect x="78" y="58" width="84" height="12" rx="6" fill="#f6c453"/>
+<path d="M88 60 L88 68 M102 60 L102 68 M116 60 L116 68 M130 60 L130 68
+M144 60 L144 68" stroke="#d9a63c" stroke-width="2"/>
+<circle cx="120" cy="64" r="7" fill="#f6c453"/>
+<circle cx="120" cy="64" r="3.4" fill="#d64545"/>
+<circle cx="118.6" cy="62.6" r="1.1" fill="#fff"/>
+</g>
 </g>
 </g></svg>"""
 
