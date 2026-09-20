@@ -214,6 +214,14 @@ def _refresh_openrouter():
 threading.Thread(target=_refresh_openrouter, daemon=True).start()
 
 
+def _model_label(pid: str, mid: str) -> str:
+    """Dropdown label: short name · free/provider · code/chat."""
+    short = mid.split("/")[-1].replace(":free", "").replace("-", " ").strip()
+    kind = "code" if any(k in mid.lower() for k in ("coder", "code", "dev")) else "chat"
+    tag = "free" if (":free" in mid or mid.endswith("-free")) else pid
+    return f"{short} · {tag} · {kind}"
+
+
 ALL_MODELS = [f"{p}:{m}" for p, pv in PROVIDERS.items() if pv["key"]
               for m in pv["models"]]
 
@@ -733,7 +741,7 @@ class Handler(BaseHTTPRequestHandler):
         tok = self.headers.get("x-fn-token", req.get("token", ""))
 
         if self.path == "/models":
-            models = [{"id": f"{p}:{m}", "label": f"{m} · {p}"}
+            models = [{"id": f"{p}:{m}", "label": _model_label(p, m)}
                       for p, pv in PROVIDERS.items() if pv["key"]
                       for m in pv["models"]]
             return self._send(200, {"models": models})
