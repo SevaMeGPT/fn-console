@@ -134,6 +134,20 @@ def _save_usage(d: dict):
 USERS = _load_users()          # {"users": [...], "limit": int, "window_h": int}
 USAGE: dict = _load_usage()    # user -> {"tokens": n, "win": epoch_start}
 
+# Render storage is ephemeral: accounts created via the panel die on redeploys.
+# SEED_USERS env ("raju:pw1,ali:pw2") re-creates them at every boot.
+_seed = os.environ.get("SEED_USERS", "")
+if _seed:
+    _added = False
+    for pair in _seed.split(","):
+        _u, _, _pw = pair.partition(":")
+        _u = _u.strip()
+        if _u and _pw and not any(x["u"] == _u for x in USERS["users"]):
+            USERS["users"].append({"u": _u, "h": _h(_pw), "role": "user"})
+            _added = True
+    if _added:
+        _save_users(USERS)
+
 
 def _usage_check(user: str, role: str) -> str | None:
     """Return a rejection reason if user is over budget, else None."""
