@@ -243,7 +243,7 @@ TOOLS = [
                       "required": ["command"]}},
 ]
 
-MASCOT = """<svg id="pehlwan" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+MASCOT = """<svg id="pehlwan" viewBox="0 0 240 250" xmlns="http://www.w3.org/2000/svg">
 <style>#pehlwan #head{transform-box:fill-box;transform-origin:50% 78%;
 transition:transform .35s cubic-bezier(.34,1.56,.64,1);
 animation:idle 3.4s ease-in-out infinite}
@@ -254,12 +254,19 @@ animation:idle 3.4s ease-in-out infinite}
 @keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(3px) rotate(-1.3deg)}}
 </style>
 <g id="head" fill="#f2e9d8">
-<path id="safa" d="M56 86 C40 38 68 8 116 6 C158 4 192 24 194 60
-C195 78 184 88 164 90 L82 94 C66 95 58 93 56 86 Z"/>
-<path id="safa-knot" d="M148 14 C162 2 182 8 184 26 C185 40 176 48 166 44
-C156 38 151 27 148 14 Z"/>
-<path id="safa-fold" d="M118 6 C108 30 104 54 106 90" stroke="#0d1117"
-stroke-width="4" fill="none" stroke-linecap="round" opacity=".16"/>
+<path id="vest" d="M44 250 C44 224 60 210 82 206 L98 226 L120 202
+L142 226 L158 206 C180 210 196 224 196 250 Z"/>
+<path id="beard" d="M60 134 C70 128 82 130 92 138 C98 144 106 148 112 148
+C116 148 118 145 120 145 C122 145 124 148 128 148 C134 148 142 144 148 138
+C158 130 170 128 180 134 C190 146 192 162 189 178 C185 204 172 226 154 238
+C142 246 128 248 120 248 C112 248 98 246 86 238 C68 226 55 204 51 178
+C48 162 50 146 60 134 Z"/>
+<path d="M80 152 C78 174 86 200 100 216" stroke="#0d1117" stroke-width="4"
+fill="none" stroke-linecap="round" opacity=".18"/>
+<path d="M160 152 C162 174 154 200 140 216" stroke="#0d1117" stroke-width="4"
+fill="none" stroke-linecap="round" opacity=".18"/>
+<path d="M120 152 L120 224" stroke="#0d1117" stroke-width="3.5" fill="none"
+stroke-linecap="round" opacity=".14"/>
 <g id="glasses" fill="none" stroke="#f2e9d8" stroke-width="6">
 <rect x="70" y="112" width="38" height="36" rx="11"/>
 <rect x="132" y="112" width="38" height="36" rx="11"/>
@@ -267,19 +274,16 @@ stroke-width="4" fill="none" stroke-linecap="round" opacity=".16"/>
 <path d="M70 124 L54 118" stroke-linecap="round"/>
 <path d="M170 124 L186 118" stroke-linecap="round"/>
 </g>
-<g id="beard">
-<path d="M60 134 C70 128 82 130 92 138 C98 144 106 148 112 148
-C116 148 118 145 120 145 C122 145 124 148 128 148 C134 148 142 144 148 138
-C158 130 170 128 180 134 C188 144 191 154 189 166 C187 190 177 210 159 224
-C147 233 132 237 120 237 C108 237 93 233 81 224 C63 210 53 190 51 166
-C49 152 52 142 60 134 Z"/>
-<path d="M78 158 C76 176 84 198 98 212" stroke="#0d1117" stroke-width="4"
-fill="none" stroke-linecap="round" opacity=".2"/>
-<path d="M162 158 C164 176 156 198 142 212" stroke="#0d1117" stroke-width="4"
-fill="none" stroke-linecap="round" opacity=".2"/>
-<path d="M120 152 L120 218" stroke="#0d1117" stroke-width="3.5" fill="none"
-stroke-linecap="round" opacity=".16"/>
-</g>
+<path id="safa" d="M54 88 C34 38 66 4 116 2 C160 0 196 20 197 56
+C198 76 186 88 166 90 L82 94 C66 95 56 95 54 88 Z"/>
+<path id="safa-knot" d="M150 12 C164 0 184 6 186 24 C187 38 178 46 168 42
+C158 36 153 25 150 12 Z"/>
+<path id="plume" d="M182 18 C196 4 216 2 226 10 C230 22 222 34 206 38
+C216 28 218 20 212 16 C202 10 190 12 182 18 Z"/>
+<path id="safa-fold" d="M118 4 C108 28 104 52 106 90" stroke="#0d1117"
+stroke-width="4" fill="none" stroke-linecap="round" opacity=".16"/>
+<path id="safa-fold2" d="M150 8 C160 26 164 46 162 88" stroke="#0d1117"
+stroke-width="4" fill="none" stroke-linecap="round" opacity=".12"/>
 </g></svg>"""
 
 PAGE = """<!doctype html><html><head><meta charset=utf-8><meta name=viewport
