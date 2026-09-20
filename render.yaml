@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: fn-console
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: APP_PASSWORD       # set in Render dashboard (secret)
+        sync: false
+      - key: ADMIN_PASSWORD     # set in Render dashboard (secret)
+        sync: false
+      - key: ONEPROVIDER_KEY    # set in Render dashboard (secret)
+        sync: false
+      - key: FN_STATIC_KEY      # set in Render dashboard (secret)
+        sync: false
