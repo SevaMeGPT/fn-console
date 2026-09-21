@@ -21,6 +21,7 @@ import os
 import re
 import secrets
 import subprocess
+import sys
 import threading
 import time
 import urllib.error
@@ -1043,7 +1044,7 @@ class Handler(BaseHTTPRequestHandler):
                                 if b.get("type") == "text") or "(empty reply)"
                 if i > 0:
                     reply += (f"\n\n(note: {model} was busy — "
-                              f"{md.split('/')[-1]} ne jawab diya)")
+                              f"{md.split('/')[-1]} answered instead)")
                 return reply, tokens
             except urllib.error.HTTPError as e:
                 last_exc = e
@@ -1118,6 +1119,13 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    # pythonw-safe: pythonw leaves sys.stdout/stderr as None, which would
+    # crash every print(); route them to a log file instead.
+    if sys.stdout is None:
+        sys.stdout = open(Path(__file__).parent / "fn_console_run.log",
+                          "a", encoding="utf-8")
+    if sys.stderr is None:
+        sys.stderr = sys.stdout
     if not _acquire_lock(LOCK_FILE):
         print("another console instance holds the lock — exiting")
         raise SystemExit(0)
